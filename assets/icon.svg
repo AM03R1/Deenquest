@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DeenQuest">
+  <rect width="512" height="512" rx="112" fill="#0b4335" />
+  <circle cx="256" cy="256" r="168" fill="#0b6b55" />
+  <path
+    fill="#f4c95d"
+    d="M338 129c-58 7-103 56-103 116 0 64 52 117 117 117 21 0 41-6 58-16-29 41-77 68-132 68-90 0-163-73-163-163 0-84 63-153 145-162-9 12-15 26-15 42 0 40 32 72 72 72 8 0 15-1 21-3z"
+  />
+  <path
+    fill="#fff9e8"
+    d="m254 170 18 37 41 6-30 29 7 41-36-19-37 19 7-41-30-29 42-6z"
+  />
+  <path fill="#ffffff" d="M164 334h184v34H164z" opacity=".92" />
+  <path fill="#ffffff" d="M184 286h144v34H184z" opacity=".82" />
+</svg>

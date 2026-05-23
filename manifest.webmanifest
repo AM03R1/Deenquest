@@ -1,0 +1,19 @@
+{
+  "name": "DeenQuest",
+  "short_name": "DeenQuest",
+  "description": "Leer over Islam met doelen, quizzen, XP en levels.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f7faf8",
+  "theme_color": "#0b4335",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

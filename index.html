@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b4335" />
+    <meta
+      name="description"
+      content="DeenQuest helpt jongeren spelenderwijs leren over Islam met doelen, quizzen, XP en levels."
+    />
+    <title>DeenQuest</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header" aria-label="DeenQuest overzicht">
+        <div class="brand-lockup">
+          <img class="brand-mark" src="assets/icon.svg" alt="" width="44" height="44" />
+          <div>
+            <p class="eyebrow">Mobile leerreis</p>
+            <h1>DeenQuest</h1>
+          </div>
+        </div>
+        <button
+          class="icon-button"
+          id="settingsButton"
+          type="button"
+          aria-label="Instellingen openen"
+          aria-controls="settingsOverlay"
+          aria-expanded="false"
+          title="Instellingen"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.5a2 2 0 0 1-1 1.72l-.15.1a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.5a2 2 0 0 1 1-1.72l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z" />
+            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+          </svg>
+        </button>
+      </header>
+
+      <main>
+        <section class="view active" id="homeView" aria-labelledby="homeTitle">
+          <article class="hero-card">
+            <div class="hero-copy">
+              <p class="eyebrow">Vandaag</p>
+              <h2 id="homeTitle">Blijf leren, elke stap telt.</h2>
+              <p class="hero-text">Kleine acties bouwen grote gewoones. Pak een doel of test je kennis.</p>
+            </div>
+            <div class="level-badge" aria-live="polite">
+              <span>Level</span>
+              <strong id="homeLevel">1</strong>
+            </div>
+          </article>
+
+          <section class="stats-grid" aria-label="Voortgang samenvatting">
+            <article class="stat-card">
+              <span>Totaal XP</span>
+              <strong id="homeXp">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Doelen klaar</span>
+              <strong id="homeGoalsDone">0</strong>
+            </article>
+          </section>
+
+          <article class="progress-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Level progressie</p>
+                <h3>Op weg naar level <span id="nextLevelLabel">2</span></h3>
+              </div>
+              <span class="progress-count" id="progressCount">0/100 XP</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="homeProgressBar"></div>
+            </div>
+          </article>
+
+          <section class="quick-actions" aria-label="Snelle acties">
+            <button class="action-tile" type="button" data-go-view="goals">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+              <span>Doel afronden</span>
+            </button>
+            <button class="action-tile" type="button" data-go-view="quiz">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 2-3 4" />
+                <path d="M12 17h.01" />
+                <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" />
+              </svg>
+              <span>Quiz starten</span>
+            </button>
+          </section>
+        </section>
+
+        <section class="view" id="goalsView" aria-labelledby="goalsTitle">
+          <div class="section-heading view-heading">
+            <div>
+              <p class="eyebrow">Persoonlijke groei</p>
+              <h2 id="goalsTitle">Doelen</h2>
+            </div>
+            <span class="xp-chip">+20 XP</span>
+          </div>
+
+          <form class="goal-form" id="goalForm">
+            <label for="goalInput">Nieuw doel</label>
+            <div class="input-row">
+              <input
+                id="goalInput"
+                name="goal"
+                type="text"
+                autocomplete="off"
+                maxlength="80"
+                placeholder="Bijv. Lees 5 minuten Qur'an"
+                required
+              />
+              <button class="primary-button" type="submit">Toevoegen</button>
+            </div>
+          </form>
+
+          <div class="goal-list" id="goalList" aria-live="polite"></div>
+        </section>
+
+        <section class="view" id="quizView" aria-labelledby="quizTitle">
+          <div class="section-heading view-heading">
+            <div>
+              <p class="eyebrow">Kennis oefenen</p>
+              <h2 id="quizTitle">Quiz</h2>
+            </div>
+            <span class="xp-chip">+10 XP per goed</span>
+          </div>
+
+          <article class="quiz-card" id="quizCard">
+            <div class="quiz-topline">
+              <span id="quizTopic">Basiskennis Islam</span>
+              <span id="quizStep">1/10</span>
+            </div>
+            <h3 id="questionText">Vraag wordt geladen...</h3>
+            <div class="answer-list" id="answerList"></div>
+            <p class="feedback" id="quizFeedback" aria-live="polite"></p>
+            <div class="quiz-actions">
+              <button class="secondary-button" id="restartQuizButton" type="button">Opnieuw</button>
+              <button class="primary-button" id="nextQuestionButton" type="button" disabled>Volgende</button>
+            </div>
+          </article>
+
+          <article class="quiz-result-card hidden" id="quizResultCard" aria-live="polite">
+            <p class="eyebrow">Quiz afgerond</p>
+            <h3 id="quizResultTitle">Mooi gedaan</h3>
+            <p id="quizResultText"></p>
+            <button class="primary-button" id="newQuizButton" type="button">Nieuwe ronde</button>
+          </article>
+        </section>
+
+        <section class="view" id="progressView" aria-labelledby="progressTitle">
+          <div class="section-heading view-heading">
+            <div>
+              <p class="eyebrow">Jouw reis</p>
+              <h2 id="progressTitle">Progressie</h2>
+            </div>
+            <span class="xp-chip" id="progressLevelChip">Level 1</span>
+          </div>
+
+          <article class="progress-hero">
+            <div class="ring" id="progressRing" aria-hidden="true">
+              <span id="ringPercent">0%</span>
+            </div>
+            <div>
+              <p class="eyebrow">Totaal verdiend</p>
+              <h3><span id="progressTotalXp">0</span> XP</h3>
+              <p class="muted">Elke 100 XP brengt je naar een nieuw level.</p>
+            </div>
+          </article>
+
+          <section class="history-section">
+            <div class="section-heading compact-heading">
+              <h3>Laatste quizresultaten</h3>
+            </div>
+            <div class="history-list" id="quizHistoryList"></div>
+          </section>
+        </section>
+      </main>
+
+      <nav class="tab-bar" aria-label="Hoofdnavigatie">
+        <button class="tab-button active" type="button" data-view="home" aria-current="page">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m3 10 9-7 9 7" />
+            <path d="M5 10v10h14V10" />
+            <path d="M9 20v-6h6v6" />
+          </svg>
+          <span>Home</span>
+        </button>
+        <button class="tab-button" type="button" data-view="goals">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M8 6h13" />
+            <path d="M8 12h13" />
+            <path d="M8 18h13" />
+            <path d="m3 6 1 1 2-2" />
+            <path d="m3 12 1 1 2-2" />
+            <path d="m3 18 1 1 2-2" />
+          </svg>
+          <span>Doelen</span>
+        </button>
+        <button class="tab-button" type="button" data-view="quiz">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
+          <span>Quiz</span>
+        </button>
+        <button class="tab-button" type="button" data-view="progress">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M3 3v18h18" />
+            <path d="m19 9-5 5-4-4-3 3" />
+          </svg>
+          <span>Progressie</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="settings-overlay hidden" id="settingsOverlay" aria-hidden="true">
+      <section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="settings-header">
+          <div>
+            <p class="eyebrow">Voorkeuren</p>
+            <h2 id="settingsTitle">Instellingen</h2>
+          </div>
+          <button class="icon-button" id="closeSettingsButton" type="button" aria-label="Instellingen sluiten">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <label class="setting-row" for="darkModeToggle">
+          <span>
+            <strong>Dark mode</strong>
+            <small>Rustige donkere weergave</small>
+          </span>
+          <input class="switch-input" id="darkModeToggle" type="checkbox" />
+          <span class="switch-track" aria-hidden="true"></span>
+        </label>
+
+        <button class="secondary-button reset-button" id="resetDemoButton" type="button">
+          Demo opnieuw starten
+        </button>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
