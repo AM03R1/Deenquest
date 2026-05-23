@@ -1,11 +1,16 @@
-const CACHE_NAME = "deenquest-v3";
+const CACHE_NAME = "deenquest-v19";
 const APP_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  "./styles.css?v=19",
+  "./app.js?v=19",
   "./manifest.webmanifest",
   "./assets/icon.svg",
+  "./assets/prayer-standing.png",
+  "./assets/prayer-ruku.png",
+  "./assets/prayer-sujud.png",
+  "./assets/prayer-sitting.png",
+  "./assets/prayer-salam-sitting.png?v=19",
 ];
 
 self.addEventListener("install", (event) => {

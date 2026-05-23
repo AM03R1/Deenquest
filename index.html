@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=19" />
   </head>
   <body>
     <div class="app-shell">
@@ -46,12 +46,24 @@
             <div class="hero-copy">
               <p class="eyebrow">Vandaag</p>
               <h2 id="homeTitle">Blijf leren, elke stap telt.</h2>
-              <p class="hero-text">Kleine acties bouwen grote gewoones. Pak een doel of test je kennis.</p>
+              <p class="hero-text">Kleine acties bouwen grote gewoontes. Pak een doel of test je kennis.</p>
             </div>
             <div class="level-badge" aria-live="polite">
               <span>Level</span>
               <strong id="homeLevel">1</strong>
             </div>
+          </article>
+
+          <article class="ayah-card" aria-labelledby="dailyAyahTitle">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Ayah van vandaag</p>
+                <h3 id="dailyAyahTitle">Korte Qur'an-reflectie</h3>
+              </div>
+              <span class="ayah-reference" id="dailyAyahReference">Ta-Ha 20:114</span>
+            </div>
+            <p class="ayah-arabic" id="dailyAyahArabic" lang="ar" dir="rtl">رَبِّ زِدْنِي عِلْمًا</p>
+            <p class="ayah-meaning" id="dailyAyahMeaning">Mijn Heer, vermeerder mij in kennis.</p>
           </article>
 
           <section class="stats-grid" aria-label="Voortgang samenvatting">
@@ -93,6 +105,14 @@
                 <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" />
               </svg>
               <span>Quiz starten</span>
+            </button>
+            <button class="action-tile" type="button" data-go-view="learn">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Z" />
+                <path d="M8 7h6" />
+                <path d="M8 11h7" />
+              </svg>
+              <span>Basis leren</span>
             </button>
           </section>
         </section>
@@ -156,6 +176,187 @@
           </article>
         </section>
 
+        <section class="view" id="learnView" aria-labelledby="learnTitle">
+          <div class="section-heading view-heading">
+            <div>
+              <p class="eyebrow">Voor beginners</p>
+              <h2 id="learnTitle">Leren</h2>
+            </div>
+            <span class="xp-chip">Basis</span>
+          </div>
+
+          <article class="intro-card">
+            <h3>Rustig beginnen is ook vooruitgang.</h3>
+            <p>
+              Deze gids helpt je met de basis van wudhu en het gebed. Details kunnen per leraar of madhhab
+              verschillen, maar dit geeft je een duidelijke start.
+            </p>
+          </article>
+
+          <section class="guide-stack" aria-label="Basisgidsen">
+            <article class="guide-card">
+              <div class="guide-heading">
+                <div class="guide-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3s6 6.2 6 11a6 6 0 0 1-12 0c0-4.8 6-11 6-11Z" />
+                    <path d="M9 14a3 3 0 0 0 3 3" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="eyebrow">Wudhu</p>
+                  <h3>De wassing stap voor stap</h3>
+                </div>
+              </div>
+
+              <ol class="step-list">
+                <li>
+                  <span class="step-number">1</span>
+                  <div>
+                    <strong>Maak je intentie</strong>
+                    <p>Neem in je hart voor om wudhu te doen voor Allah.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">2</span>
+                  <div>
+                    <strong>Zeg Bismillah</strong>
+                    <p>Begin rustig en was je handen drie keer.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">3</span>
+                  <div>
+                    <strong>Mond en neus</strong>
+                    <p>Spoel je mond en reinig voorzichtig je neus.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">4</span>
+                  <div>
+                    <strong>Gezicht en armen</strong>
+                    <p>Was je gezicht, daarna je armen tot en met de ellebogen.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">5</span>
+                  <div>
+                    <strong>Hoofd, oren en voeten</strong>
+                    <p>Veeg over je hoofd, reinig je oren en was je voeten tot en met de enkels.</p>
+                  </div>
+                </li>
+              </ol>
+
+              <p class="guide-note">Tip: doe het langzaam. Netjes leren is belangrijker dan snel klaar zijn.</p>
+            </article>
+
+            <article class="guide-card">
+              <div class="guide-heading">
+                <div class="guide-icon gold-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3v18" />
+                    <path d="M7 8h10" />
+                    <path d="M5 21h14" />
+                    <path d="M9 13h6" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="eyebrow">Gebed</p>
+                  <h3>Een simpele gebedsvolgorde</h3>
+                </div>
+              </div>
+
+              <ol class="step-list">
+                <li>
+                  <span class="step-number">1</span>
+                  <div>
+                    <strong>Bereid je voor</strong>
+                    <p>Zorg voor wudhu, bedekte awrah, een schone plek en richting qiblah.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">2</span>
+                  <div>
+                    <strong>Begin staand</strong>
+                    <p>Maak intentie in je hart en zeg Allahu Akbar.</p>
+                    <figure class="posture-card step-posture">
+                      <img src="assets/prayer-standing.png" alt="Staande houding in het gebed" />
+                      <figcaption>
+                        <strong>Staand</strong>
+                        <span>Sta recht, kijk rustig naar de plek van sujud en begin met Allahu Akbar.</span>
+                      </figcaption>
+                    </figure>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">3</span>
+                  <div>
+                    <strong>Reciteer</strong>
+                    <p>Lees Al-Fatiha. Daarna kun je een korte surah lezen, zoals Al-Ikhlas.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">4</span>
+                  <div>
+                    <strong>Buigen en neerknielen</strong>
+                    <p>Ga naar ruku, kom weer rechtop, ga naar sujud, zit kort, en doe nog een sujud.</p>
+                    <div class="step-media" aria-label="Houdingen bij buigen en neerknielen">
+                      <figure class="posture-card step-posture">
+                        <img src="assets/prayer-ruku.png" alt="Buiging tijdens ruku" />
+                        <figcaption>
+                          <strong>Ruku</strong>
+                          <span>Buig met een rechte rug en plaats je handen op je knieen.</span>
+                        </figcaption>
+                      </figure>
+                      <figure class="posture-card step-posture">
+                        <img src="assets/prayer-sujud.png" alt="Neerknieling tijdens sujud" />
+                        <figcaption>
+                          <strong>Sujud</strong>
+                          <span>Voorhoofd, neus, handen, knieen en tenen raken de grond.</span>
+                        </figcaption>
+                      </figure>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <span class="step-number">5</span>
+                  <div>
+                    <strong>Sluit af</strong>
+                    <p>Na de laatste rak'ah zit je voor tashahhud en sluit je af met salam naar rechts en links.</p>
+                    <div class="step-media" aria-label="Houdingen bij afsluiten van het gebed">
+                      <figure class="posture-card step-posture">
+                        <img src="assets/prayer-sitting.png" alt="Zittende houding tussen de neerknielingen" />
+                        <figcaption>
+                          <strong>Zitten</strong>
+                          <span>Zit rustig voor tashahhud voordat je het gebed afsluit.</span>
+                        </figcaption>
+                      </figure>
+                      <figure class="posture-card step-posture">
+                        <img src="assets/prayer-salam-sitting.png?v=19" alt="Zittend afsluiten met salam" />
+                        <figcaption>
+                          <strong>Salam</strong>
+                          <span>Sluit het gebed af door salam naar rechts en links te zeggen.</span>
+                        </figcaption>
+                      </figure>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+
+              <div class="prayer-grid" aria-label="Verplichte gebeden">
+                <span>Fajr <strong>2</strong></span>
+                <span>Dhuhr <strong>4</strong></span>
+                <span>Asr <strong>4</strong></span>
+                <span>Maghrib <strong>3</strong></span>
+                <span>Isha <strong>4</strong></span>
+              </div>
+
+              <p class="guide-note">
+                Als je nog niet alles kent, begin met wat je leert en blijf stap voor stap oefenen.
+              </p>
+            </article>
+          </section>
+        </section>
+
         <section class="view" id="progressView" aria-labelledby="progressTitle">
           <div class="section-heading view-heading">
             <div>
@@ -212,6 +413,14 @@
           </svg>
           <span>Quiz</span>
         </button>
+        <button class="tab-button" type="button" data-view="learn">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Z" />
+            <path d="M8 7h6" />
+            <path d="M8 11h7" />
+          </svg>
+          <span>Leren</span>
+        </button>
         <button class="tab-button" type="button" data-view="progress">
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <path d="M3 3v18h18" />
@@ -253,6 +462,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js" defer></script>
+    <script src="app.js?v=19" defer></script>
   </body>
 </html>

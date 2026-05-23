@@ -11,6 +11,59 @@ const defaultGoals = [
   "Leer 3 namen van Allah",
 ];
 
+const dailyAyahs = [
+  {
+    reference: "Ta-Ha 20:114",
+    arabic: "رَبِّ زِدْنِي عِلْمًا",
+    meaning: "Mijn Heer, vermeerder mij in kennis.",
+  },
+  {
+    reference: "Ash-Sharh 94:5",
+    arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا",
+    meaning: "Met moeilijkheid komt ook verlichting.",
+  },
+  {
+    reference: "Al-Baqarah 2:286",
+    arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
+    meaning: "Allah belast niemand boven wat diegene aankan.",
+  },
+  {
+    reference: "Ar-Ra'd 13:28",
+    arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+    meaning: "Door het gedenken van Allah vinden harten rust.",
+  },
+  {
+    reference: "Az-Zumar 39:53",
+    arabic: "لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ",
+    meaning: "Wanhoop niet aan de barmhartigheid van Allah.",
+  },
+  {
+    reference: "Aal-Imran 3:139",
+    arabic: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا",
+    meaning: "Verlies de moed niet en wees niet bedroefd.",
+  },
+  {
+    reference: "Ibrahim 14:7",
+    arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ",
+    meaning: "Dankbaarheid opent de deur naar meer zegeningen.",
+  },
+  {
+    reference: "Al-Baqarah 2:153",
+    arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
+    meaning: "Allah is met degenen die geduldig zijn.",
+  },
+  {
+    reference: "At-Talaq 65:3",
+    arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ",
+    meaning: "Wie op Allah vertrouwt, voor diegene is Hij genoeg.",
+  },
+  {
+    reference: "Ash-Sharh 94:6",
+    arabic: "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+    meaning: "Voorwaar, met moeilijkheid is er verlichting.",
+  },
+];
+
 const quizQuestions = [
   {
     topic: "Basiskennis Islam",
@@ -90,6 +143,9 @@ const dom = {
   nextLevelLabel: document.querySelector("#nextLevelLabel"),
   progressCount: document.querySelector("#progressCount"),
   homeProgressBar: document.querySelector("#homeProgressBar"),
+  dailyAyahReference: document.querySelector("#dailyAyahReference"),
+  dailyAyahArabic: document.querySelector("#dailyAyahArabic"),
+  dailyAyahMeaning: document.querySelector("#dailyAyahMeaning"),
   goalForm: document.querySelector("#goalForm"),
   goalInput: document.querySelector("#goalInput"),
   goalList: document.querySelector("#goalList"),
@@ -199,6 +255,7 @@ function setView(viewName) {
 
 function render() {
   renderDashboard();
+  renderDailyAyah();
   renderGoals();
   renderProgress();
 }
@@ -228,6 +285,18 @@ function closeSettings() {
   dom.settingsOverlay.setAttribute("aria-hidden", "true");
   dom.settingsButton.setAttribute("aria-expanded", "false");
   dom.settingsButton.focus();
+}
+
+function renderDailyAyah() {
+  const today = new Date();
+  const dayKey = Math.floor(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 86_400_000
+  );
+  const ayah = dailyAyahs[dayKey % dailyAyahs.length];
+
+  dom.dailyAyahReference.textContent = ayah.reference;
+  dom.dailyAyahArabic.textContent = ayah.arabic;
+  dom.dailyAyahMeaning.textContent = ayah.meaning;
 }
 
 function renderDashboard() {
@@ -315,7 +384,7 @@ function renderProgress() {
   dom.progressTotalXp.textContent = state.xp;
   dom.ringPercent.textContent = `${progressPercent}%`;
   dom.progressRing.style.background = `
-    radial-gradient(circle, var(--white) 57%, transparent 58%),
+    radial-gradient(circle, var(--ring-center) 57%, transparent 58%),
     conic-gradient(var(--green) ${progressPercent * 3.6}deg, var(--ring-rest) 0deg)
   `;
 

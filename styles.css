@@ -18,6 +18,13 @@
   --tab-surface: rgba(255, 255, 255, 0.94);
   --overlay: rgba(7, 19, 31, 0.48);
   --switch-thumb: #ffffff;
+  --on-hero: #ffffff;
+  --on-primary: #ffffff;
+  --on-accent: #ffffff;
+  --ring-center: #ffffff;
+  --toast-bg: #102238;
+  --toast-fg: #ffffff;
+  --gold-text: #7a5a10;
   --paper: #f7faf8;
   --line: #dce8e2;
   --muted: #6a7a87;
@@ -48,6 +55,13 @@
   --tab-surface: rgba(12, 25, 38, 0.96);
   --overlay: rgba(2, 8, 15, 0.68);
   --switch-thumb: #edf7f1;
+  --on-hero: #ffffff;
+  --on-primary: #07131f;
+  --on-accent: #07131f;
+  --ring-center: #12263a;
+  --toast-bg: #0d1d2c;
+  --toast-fg: #edf7f1;
+  --gold-text: #ffe39a;
   --paper: #07131f;
   --line: #274154;
   --muted: #a8bac5;
@@ -154,7 +168,8 @@ h3 {
 .icon-button,
 .tab-button svg,
 .action-tile svg,
-.answer-button svg {
+.answer-button svg,
+.guide-icon svg {
   color: currentColor;
 }
 
@@ -173,7 +188,8 @@ h3 {
 .icon-button svg,
 .tab-button svg,
 .action-tile svg,
-.answer-button svg {
+.answer-button svg,
+.guide-icon svg {
   width: 20px;
   height: 20px;
   fill: none;
@@ -204,6 +220,7 @@ h3 {
 }
 
 .hero-card,
+.ayah-card,
 .progress-card,
 .stat-card,
 .goal-form,
@@ -228,7 +245,7 @@ h3 {
   background:
     linear-gradient(135deg, rgba(11, 67, 53, 0.96), rgba(16, 34, 56, 0.94)),
     var(--green-dark);
-  color: var(--white);
+  color: var(--on-hero);
 }
 
 :root[data-theme="dark"] .hero-card {
@@ -299,6 +316,50 @@ h3 {
   margin-top: 12px;
 }
 
+.ayah-card {
+  margin-top: 12px;
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(11, 107, 85, 0.08), rgba(201, 154, 46, 0.1)),
+    var(--card);
+  box-shadow: 0 10px 28px rgba(16, 34, 56, 0.08);
+}
+
+:root[data-theme="dark"] .ayah-card {
+  background:
+    linear-gradient(135deg, rgba(53, 195, 144, 0.1), rgba(228, 189, 91, 0.08)),
+    var(--card);
+}
+
+.ayah-reference {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 0.77rem;
+  font-weight: 950;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.ayah-arabic {
+  margin: 14px 0 0;
+  color: var(--navy);
+  font-family: "Geeza Pro", "Noto Naskh Arabic", "Traditional Arabic", serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.9;
+  text-align: right;
+}
+
+.ayah-meaning {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
 .stat-card {
   padding: 16px;
   box-shadow: 0 10px 28px rgba(16, 34, 56, 0.08);
@@ -355,7 +416,7 @@ h3 {
   flex: 0 0 auto;
   border-radius: 999px;
   background: var(--gold-soft);
-  color: #7a5a10;
+  color: var(--gold-text);
   font-size: 0.77rem;
   font-weight: 900;
   padding: 7px 10px;
@@ -408,6 +469,208 @@ h3 {
   font-weight: 900;
 }
 
+.quick-actions .action-tile:nth-child(3) {
+  grid-column: 1 / -1;
+  min-height: 82px;
+}
+
+.intro-card,
+.guide-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: 0 10px 28px rgba(16, 34, 56, 0.08);
+}
+
+.intro-card {
+  padding: 16px;
+}
+
+.intro-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.guide-stack {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.guide-card {
+  padding: 16px;
+}
+
+.guide-heading {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.guide-icon {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green-dark);
+}
+
+.guide-icon.gold-icon {
+  background: var(--gold-soft);
+  color: var(--gold-text);
+}
+
+.step-list {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.step-number {
+  display: inline-grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--on-primary);
+  font-size: 0.84rem;
+  font-weight: 950;
+}
+
+.step-list strong {
+  display: block;
+  color: var(--navy);
+  font-weight: 950;
+}
+
+.step-list p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.guide-note {
+  margin: 14px 0 0;
+  border-radius: var(--radius);
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.45;
+  padding: 12px;
+}
+
+.prayer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.prayer-grid span {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--input);
+  color: var(--muted);
+  font-size: clamp(0.66rem, 2.4vw, 0.78rem);
+  font-weight: 900;
+  padding: 9px 5px;
+  text-align: center;
+}
+
+.prayer-grid strong {
+  color: var(--green-dark);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.posture-card {
+  display: grid;
+  grid-template-columns: 136px 1fr;
+  align-items: center;
+  min-width: 0;
+  gap: 12px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--input);
+  padding: 10px;
+}
+
+.posture-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--green-soft);
+  object-fit: cover;
+}
+
+.posture-card figcaption {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.posture-card figcaption strong {
+  color: var(--navy);
+  font-size: 0.98rem;
+  font-weight: 950;
+}
+
+.posture-card figcaption span {
+  color: var(--muted);
+}
+
+.step-media {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.step-posture {
+  grid-template-columns: 1fr;
+  margin-top: 10px;
+}
+
+.step-media .step-posture {
+  margin-top: 0;
+}
+
+.step-posture img {
+  height: min(260px, 58vw);
+  aspect-ratio: auto;
+  background: #102015;
+  object-fit: contain;
+}
+
+.step-posture figcaption {
+  padding: 0 2px 2px;
+}
+
 .goal-form {
   padding: 14px;
   box-shadow: 0 10px 28px rgba(16, 34, 56, 0.08);
@@ -438,6 +701,11 @@ input {
   padding: 12px;
 }
 
+input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
 input:focus {
   border-color: var(--green);
   box-shadow: 0 0 0 3px rgba(11, 107, 85, 0.13);
@@ -453,7 +721,7 @@ input:focus {
 
 .primary-button {
   background: var(--green);
-  color: var(--white);
+  color: var(--on-primary);
 }
 
 .secondary-button {
@@ -511,7 +779,7 @@ input:focus {
 .goal-item.completed .goal-check {
   border-color: var(--green);
   background: var(--green);
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 .goal-title {
@@ -668,7 +936,7 @@ input:focus {
   place-items: center;
   border-radius: 50%;
   background:
-    radial-gradient(circle, var(--white) 57%, transparent 58%),
+    radial-gradient(circle, var(--ring-center) 57%, transparent 58%),
     conic-gradient(var(--green) 0deg, var(--green) 0deg, var(--ring-rest) 0deg);
   color: var(--green-dark);
   font-size: 1.4rem;
@@ -717,7 +985,7 @@ input:focus {
   left: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   width: min(100%, 520px);
   margin: 0 auto;
   padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
@@ -744,7 +1012,7 @@ input:focus {
 .tab-button span {
   width: 100%;
   overflow: hidden;
-  font-size: clamp(0.66rem, 2.7vw, 0.78rem);
+  font-size: clamp(0.6rem, 2.45vw, 0.76rem);
   font-weight: 900;
   line-height: 1.1;
   text-align: center;
@@ -876,8 +1144,8 @@ input:focus {
   margin: 0 auto;
   transform: translateY(16px);
   border-radius: var(--radius);
-  background: var(--navy);
-  color: var(--white);
+  background: var(--toast-bg);
+  color: var(--toast-fg);
   font-weight: 900;
   opacity: 0;
   padding: 13px 14px;
@@ -919,6 +1187,14 @@ input:focus {
 
   .ring {
     margin: 0 auto;
+  }
+
+  .posture-card {
+    grid-template-columns: 120px 1fr;
+  }
+
+  .step-posture {
+    grid-template-columns: 1fr;
   }
 }
 
