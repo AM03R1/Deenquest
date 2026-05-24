@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=19" />
+    <link rel="stylesheet" href="styles.css?v=26" />
   </head>
   <body>
     <div class="app-shell">
@@ -151,8 +151,19 @@
               <p class="eyebrow">Kennis oefenen</p>
               <h2 id="quizTitle">Quiz</h2>
             </div>
-            <span class="xp-chip">+10 XP per goed</span>
+            <span class="xp-chip" id="quizXpChip">+10 XP per goed</span>
           </div>
+
+          <article class="quiz-setup-card" id="quizSetupCard">
+            <div class="quiz-setup-header">
+              <p class="eyebrow">Kies je missie</p>
+              <h3>Quizroutes</h3>
+              <p>Kies een onderwerp. Daarna open je een aparte pagina met Beginner, Gevorderd en Expert naast elkaar.</p>
+            </div>
+
+            <div class="quiz-route-list" id="quizRouteList" aria-label="Quiz onderwerpen en niveaus"></div>
+            <p class="quiz-lock-note" id="quizLockNote" aria-live="polite"></p>
+          </article>
 
           <article class="quiz-card" id="quizCard">
             <div class="quiz-topline">
@@ -172,7 +183,10 @@
             <p class="eyebrow">Quiz afgerond</p>
             <h3 id="quizResultTitle">Mooi gedaan</h3>
             <p id="quizResultText"></p>
-            <button class="primary-button" id="newQuizButton" type="button">Nieuwe ronde</button>
+            <div class="quiz-result-actions">
+              <button class="secondary-button" id="changeQuizButton" type="button">Andere keuze</button>
+              <button class="primary-button" id="newQuizButton" type="button">Nieuwe ronde</button>
+            </div>
           </article>
         </section>
 
@@ -462,6 +476,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=19" defer></script>
+    <script src="app.js?v=26" defer></script>
   </body>
 </html>
