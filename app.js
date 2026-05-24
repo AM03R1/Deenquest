@@ -1,6 +1,7 @@
 const STORAGE_KEY = "deenquest-state-v1";
 const THEME_KEY = "deenquest-theme";
-const GOAL_XP = 20;
+const GOAL_XP = 5;
+const QUIZ_COMPLETION_XP = 15;
 const XP_PER_LEVEL = 100;
 const QUIZ_QUESTION_COUNT = 10;
 const QUIZ_PASS_SCORE = 6;
@@ -103,19 +104,16 @@ const quizDifficulties = [
     id: "beginner",
     label: "Beginner",
     description: "Rustige startvragen.",
-    xpPerCorrect: 10,
   },
   {
     id: "advanced",
     label: "Gevorderd",
     description: "Meer details en begrippen.",
-    xpPerCorrect: 15,
   },
   {
     id: "expert",
     label: "Expert",
     description: "Voor wie de basis sterk beheerst.",
-    xpPerCorrect: 20,
   },
 ];
 
@@ -787,7 +785,7 @@ function renderHomeGoals() {
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg>
           </button>
           <p class="goal-title">${escapeHtml(goal.title)}</p>
-          <span class="goal-status">+20 XP</span>
+          <span class="goal-status">+${GOAL_XP} XP</span>
         </article>
       `;
     })
@@ -802,7 +800,7 @@ function renderGoals() {
 
   dom.goalList.innerHTML = state.goals
     .map((goal) => {
-      const status = goal.completed ? "Voltooid" : "+20 XP";
+      const status = goal.completed ? "Voltooid" : `+${GOAL_XP} XP`;
       const disabled = goal.completed ? "disabled" : "";
       return `
         <article class="goal-item ${goal.completed ? "completed" : ""}">
@@ -874,7 +872,7 @@ function isDifficultyUnlocked(subjectId, difficultyId) {
 function getDifficultyRequirementText(subjectId, difficulty) {
   const bestScore = getBestQuizScore(subjectId, difficulty.id);
   if (bestScore >= QUIZ_PASS_SCORE) return `Behaald: ${bestScore}/10`;
-  if (isDifficultyUnlocked(subjectId, difficulty.id)) return `${difficulty.xpPerCorrect} XP per goed`;
+  if (isDifficultyUnlocked(subjectId, difficulty.id)) return `${QUIZ_COMPLETION_XP} XP bij afronden`;
 
   const previousDifficulty = getPreviousDifficulty(difficulty.id);
   return `Haal 6/10 op ${previousDifficulty.label}`;
@@ -931,7 +929,7 @@ function renderQuizSetup() {
       })
       .join("");
 
-    dom.quizXpChip.textContent = `${QUIZ_PASS_SCORE}/10 opent volgend niveau`;
+    dom.quizXpChip.textContent = `+${QUIZ_COMPLETION_XP} XP per quiz`;
     dom.quizLockNote.textContent = "Kies eerst een onderwerp. Daarna open je de drie moeilijkheidsgraden.";
     return;
   }
@@ -984,7 +982,7 @@ function renderQuizSetup() {
     </section>
   `;
 
-  dom.quizXpChip.textContent = `${QUIZ_PASS_SCORE}/10 opent volgend niveau`;
+  dom.quizXpChip.textContent = `+${QUIZ_COMPLETION_XP} XP per quiz`;
   dom.quizLockNote.textContent =
     "Elke quiz heeft 10 vragen. Haal minimaal 6 goed om het volgende niveau binnen dat onderwerp vrij te spelen.";
 }
@@ -1032,7 +1030,7 @@ function renderQuizResult() {
   const score = quizSession.answers.filter(Boolean).length;
   const difficulty = getDifficultyById(quizSession.difficultyId);
   const subject = getSubjectById(quizSession.subjectId);
-  const xpEarned = score * difficulty.xpPerCorrect;
+  const xpEarned = QUIZ_COMPLETION_XP;
   const percentage = Math.round((score / quizSession.questions.length) * 100);
 
   dom.quizResultTitle.textContent =
@@ -1152,7 +1150,7 @@ function finishQuiz() {
   const score = quizSession.answers.filter(Boolean).length;
   const difficulty = getDifficultyById(quizSession.difficultyId);
   const subject = getSubjectById(quizSession.subjectId);
-  const xpEarned = score * difficulty.xpPerCorrect;
+  const xpEarned = QUIZ_COMPLETION_XP;
   quizSession.finished = true;
   quizSession.xpGranted = true;
 
