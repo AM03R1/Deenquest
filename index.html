@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=26" />
+    <link rel="stylesheet" href="styles.css?v=28" />
   </head>
   <body>
     <div class="app-shell">
@@ -20,8 +20,8 @@
         <div class="brand-lockup">
           <img class="brand-mark" src="assets/icon.svg" alt="" width="44" height="44" />
           <div>
-            <p class="eyebrow">Mobile leerreis</p>
             <h1>DeenQuest</h1>
+            <p class="brand-greeting">Selamu aleykum</p>
           </div>
         </div>
         <button
@@ -54,29 +54,6 @@
             </div>
           </article>
 
-          <article class="ayah-card" aria-labelledby="dailyAyahTitle">
-            <div class="section-heading compact-heading">
-              <div>
-                <p class="eyebrow">Ayah van vandaag</p>
-                <h3 id="dailyAyahTitle">Korte Qur'an-reflectie</h3>
-              </div>
-              <span class="ayah-reference" id="dailyAyahReference">Ta-Ha 20:114</span>
-            </div>
-            <p class="ayah-arabic" id="dailyAyahArabic" lang="ar" dir="rtl">رَبِّ زِدْنِي عِلْمًا</p>
-            <p class="ayah-meaning" id="dailyAyahMeaning">Mijn Heer, vermeerder mij in kennis.</p>
-          </article>
-
-          <section class="stats-grid" aria-label="Voortgang samenvatting">
-            <article class="stat-card">
-              <span>Totaal XP</span>
-              <strong id="homeXp">0</strong>
-            </article>
-            <article class="stat-card">
-              <span>Doelen klaar</span>
-              <strong id="homeGoalsDone">0</strong>
-            </article>
-          </section>
-
           <article class="progress-card">
             <div class="section-heading">
               <div>
@@ -90,31 +67,29 @@
             </div>
           </article>
 
-          <section class="quick-actions" aria-label="Snelle acties">
-            <button class="action-tile" type="button" data-go-view="goals">
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <path d="M9 11l3 3L22 4" />
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-              </svg>
-              <span>Doel afronden</span>
-            </button>
-            <button class="action-tile" type="button" data-go-view="quiz">
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 2-3 4" />
-                <path d="M12 17h.01" />
-                <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" />
-              </svg>
-              <span>Quiz starten</span>
-            </button>
-            <button class="action-tile" type="button" data-go-view="learn">
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Z" />
-                <path d="M8 7h6" />
-                <path d="M8 11h7" />
-              </svg>
-              <span>Basis leren</span>
-            </button>
-          </section>
+          <article class="ayah-card" aria-labelledby="dailyAyahTitle">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Ayah van vandaag</p>
+                <h3 id="dailyAyahTitle">Korte Qur'an-reflectie</h3>
+              </div>
+              <span class="ayah-reference" id="dailyAyahReference">Ta-Ha 20:114</span>
+            </div>
+            <p class="ayah-arabic" id="dailyAyahArabic" lang="ar" dir="rtl">رَبِّ زِدْنِي عِلْمًا</p>
+            <p class="ayah-meaning" id="dailyAyahMeaning">Mijn Heer, vermeerder mij in kennis.</p>
+          </article>
+
+          <article class="home-goals-card" aria-labelledby="homeGoalsTitle">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Open doelen</p>
+                <h3 id="homeGoalsTitle">Vandaag op je lijst</h3>
+              </div>
+              <button class="mini-link-button" type="button" data-go-view="goals">Nieuw</button>
+            </div>
+            <div class="home-goal-list" id="homeGoalList" aria-live="polite"></div>
+          </article>
+
         </section>
 
         <section class="view" id="goalsView" aria-labelledby="goalsTitle">
@@ -476,6 +451,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=26" defer></script>
+    <script src="app.js?v=28" defer></script>
   </body>
 </html>

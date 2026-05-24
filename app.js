@@ -593,11 +593,10 @@ const dom = {
   darkModeToggle: document.querySelector("#darkModeToggle"),
   resetDemoButton: document.querySelector("#resetDemoButton"),
   homeLevel: document.querySelector("#homeLevel"),
-  homeXp: document.querySelector("#homeXp"),
-  homeGoalsDone: document.querySelector("#homeGoalsDone"),
   nextLevelLabel: document.querySelector("#nextLevelLabel"),
   progressCount: document.querySelector("#progressCount"),
   homeProgressBar: document.querySelector("#homeProgressBar"),
+  homeGoalList: document.querySelector("#homeGoalList"),
   dailyAyahReference: document.querySelector("#dailyAyahReference"),
   dailyAyahArabic: document.querySelector("#dailyAyahArabic"),
   dailyAyahMeaning: document.querySelector("#dailyAyahMeaning"),
@@ -718,6 +717,7 @@ function setView(viewName) {
 function render() {
   renderDashboard();
   renderDailyAyah();
+  renderHomeGoals();
   renderGoals();
   renderQuizSetup();
   renderProgress();
@@ -764,14 +764,34 @@ function renderDailyAyah() {
 
 function renderDashboard() {
   const { level, currentLevelXp, progressPercent, nextLevel } = getLevelInfo();
-  const completedGoals = state.goals.filter((goal) => goal.completed).length;
 
   dom.homeLevel.textContent = level;
-  dom.homeXp.textContent = state.xp;
-  dom.homeGoalsDone.textContent = completedGoals;
   dom.nextLevelLabel.textContent = nextLevel;
   dom.progressCount.textContent = `${currentLevelXp}/100 XP`;
   dom.homeProgressBar.style.width = `${progressPercent}%`;
+}
+
+function renderHomeGoals() {
+  const openGoals = state.goals.filter((goal) => !goal.completed);
+
+  if (!openGoals.length) {
+    dom.homeGoalList.innerHTML = `<p class="empty-state">Geen open doelen.</p>`;
+    return;
+  }
+
+  dom.homeGoalList.innerHTML = openGoals
+    .map((goal) => {
+      return `
+        <article class="goal-item home-goal-item">
+          <button class="goal-check" type="button" data-complete-goal="${goal.id}" aria-label="Doel afstrepen">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg>
+          </button>
+          <p class="goal-title">${escapeHtml(goal.title)}</p>
+          <span class="goal-status">+20 XP</span>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderGoals() {
@@ -1273,6 +1293,12 @@ dom.goalForm.addEventListener("submit", (event) => {
 });
 
 dom.goalList.addEventListener("click", (event) => {
+  const completeButton = event.target.closest("[data-complete-goal]");
+  if (!completeButton) return;
+  completeGoal(completeButton.dataset.completeGoal);
+});
+
+dom.homeGoalList.addEventListener("click", (event) => {
   const completeButton = event.target.closest("[data-complete-goal]");
   if (!completeButton) return;
   completeGoal(completeButton.dataset.completeGoal);
