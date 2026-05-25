@@ -8,9 +8,17 @@ DeenQuest is een mobile-first PWA MVP voor jongeren die spelenderwijs meer wille
 - Persoonlijke doelen toevoegen en afstrepen
 - Quiz met 10 meerkeuzevragen
 - XP en level-up systeem
+- Daily challenges met timer, claimbare XP en navigatiestip
+- Badges voor behaalde mijlpalen
+- Beloningspopup bij het claimen van een daily challenge
 - Progressie en quizgeschiedenis in localStorage
-- Dark mode en demo-reset via instellingen
+- Privacyinformatie, support, delen, dark mode en veilige reset via instellingen
 - PWA manifest en service worker
+
+## Privacy
+
+DeenQuest gebruikt geen account, advertenties, tracking of externe analytics. Voortgang blijft lokaal op het apparaat.
+Zie ook `privacy.html` en `support.html`.
 
 ## Lokaal openen
 

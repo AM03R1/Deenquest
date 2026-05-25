@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=33" />
+    <link rel="stylesheet" href="styles.css?v=38" />
   </head>
   <body>
     <div class="app-shell">
@@ -467,13 +467,76 @@
           <span class="switch-track" aria-hidden="true"></span>
         </label>
 
-        <button class="secondary-button reset-button" id="resetDemoButton" type="button">
-          Demo opnieuw starten
+        <section class="settings-info-block" aria-labelledby="privacyInfoTitle">
+          <p class="eyebrow">Privacy</p>
+          <h3 id="privacyInfoTitle">Geen account, geen tracking</h3>
+          <p>
+            Je doelen, XP, badges, quizgeschiedenis en instellingen blijven op dit apparaat. DeenQuest gebruikt geen
+            advertenties, tracking of externe analytics.
+          </p>
+          <a class="settings-link" href="privacy.html">Privacybeleid openen</a>
+          <a class="settings-link" href="support.html">Support openen</a>
+        </section>
+
+        <section class="settings-info-block" aria-labelledby="learningNoteTitle">
+          <p class="eyebrow">Leren</p>
+          <h3 id="learningNoteTitle">Basisgids</h3>
+          <p>
+            De leerpagina geeft een eenvoudige start. Details kunnen per leraar of madhhab verschillen; vraag bij
+            twijfel een betrouwbare leraar.
+          </p>
+        </section>
+
+        <button class="secondary-button reset-button" id="shareAppButton" type="button">
+          App delen
         </button>
+
+        <button class="secondary-button reset-button" id="resetProgressButton" type="button">
+          Voortgang wissen
+        </button>
+
+        <div class="reset-confirm hidden" id="resetConfirm" role="group" aria-labelledby="resetConfirmTitle">
+          <strong id="resetConfirmTitle">Alle voortgang wissen?</strong>
+          <p>Dit verwijdert doelen, XP, quizresultaten, badges en daily challenge-claims van dit apparaat.</p>
+          <div class="reset-confirm-actions">
+            <button class="secondary-button" id="cancelResetButton" type="button">Annuleren</button>
+            <button class="danger-button" id="confirmResetButton" type="button">Wissen</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="celebration-overlay hidden" id="challengeCelebrationOverlay" aria-hidden="true">
+      <section
+        class="celebration-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="challengeCelebrationTitle"
+      >
+        <button
+          class="icon-button celebration-close-button"
+          id="closeChallengeCelebrationButton"
+          type="button"
+          aria-label="Beloning sluiten"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+        <span class="celebration-mark" id="challengeCelebrationMark" aria-hidden="true">DQ</span>
+        <p class="eyebrow">Daily challenge</p>
+        <h2 id="challengeCelebrationTitle">Allahoema baarik!</h2>
+        <p id="challengeCelebrationMessage"></p>
+        <div class="celebration-rewards">
+          <span id="challengeCelebrationReward">+0 XP verdiend</span>
+          <span id="challengeCelebrationBadge">Badge behaald</span>
+        </div>
+        <button class="primary-button" id="continueChallengeCelebrationButton" type="button">Ga door</button>
       </section>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=33" defer></script>
+    <script src="app.js?v=38" defer></script>
   </body>
 </html>

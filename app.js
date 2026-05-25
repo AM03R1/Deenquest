@@ -692,7 +692,19 @@ const dom = {
   closeSettingsButton: document.querySelector("#closeSettingsButton"),
   settingsOverlay: document.querySelector("#settingsOverlay"),
   darkModeToggle: document.querySelector("#darkModeToggle"),
-  resetDemoButton: document.querySelector("#resetDemoButton"),
+  resetProgressButton: document.querySelector("#resetProgressButton"),
+  shareAppButton: document.querySelector("#shareAppButton"),
+  resetConfirm: document.querySelector("#resetConfirm"),
+  cancelResetButton: document.querySelector("#cancelResetButton"),
+  confirmResetButton: document.querySelector("#confirmResetButton"),
+  challengeCelebrationOverlay: document.querySelector("#challengeCelebrationOverlay"),
+  closeChallengeCelebrationButton: document.querySelector("#closeChallengeCelebrationButton"),
+  continueChallengeCelebrationButton: document.querySelector("#continueChallengeCelebrationButton"),
+  challengeCelebrationMark: document.querySelector("#challengeCelebrationMark"),
+  challengeCelebrationTitle: document.querySelector("#challengeCelebrationTitle"),
+  challengeCelebrationMessage: document.querySelector("#challengeCelebrationMessage"),
+  challengeCelebrationReward: document.querySelector("#challengeCelebrationReward"),
+  challengeCelebrationBadge: document.querySelector("#challengeCelebrationBadge"),
   homeLevel: document.querySelector("#homeLevel"),
   nextLevelLabel: document.querySelector("#nextLevelLabel"),
   progressCount: document.querySelector("#progressCount"),
@@ -831,6 +843,15 @@ function formatTimeLeft(milliseconds) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
+function formatDateLabel(isoDate) {
+  if (!isoDate) return "";
+
+  return new Intl.DateTimeFormat("nl-NL", {
+    day: "2-digit",
+    month: "short",
+  }).format(new Date(isoDate));
+}
+
 function getLevelInfo(xp = state.xp) {
   const level = Math.floor(xp / XP_PER_LEVEL) + 1;
   const currentLevelXp = xp % XP_PER_LEVEL;
@@ -908,6 +929,7 @@ function closeSettings() {
   dom.settingsOverlay.classList.add("hidden");
   dom.settingsOverlay.setAttribute("aria-hidden", "true");
   dom.settingsButton.setAttribute("aria-expanded", "false");
+  hideResetConfirm();
   dom.settingsButton.focus();
 }
 
@@ -1069,12 +1091,17 @@ function renderChallenges() {
 }
 
 function renderChallengeItem(challenge) {
+  const statusLabel = challenge.isClaimed ? "Vandaag voltooid" : challenge.isReady ? "Klaar om te claimen" : "Nog bezig";
   const buttonLabel = challenge.isClaimed
-    ? "Behaald"
+    ? "Bekijk beloning"
     : challenge.isReady
       ? `Claim +${challenge.xp} XP`
       : "Nog bezig";
-  const buttonAttributes = challenge.isReady && !challenge.isClaimed ? `data-claim-challenge="${challenge.id}"` : "disabled";
+  const buttonAttributes = challenge.isClaimed
+    ? `data-show-challenge-celebration="${challenge.id}"`
+    : challenge.isReady
+      ? `data-claim-challenge="${challenge.id}"`
+      : "disabled";
 
   return `
     <article class="challenge-item ${challenge.isReady ? "ready" : ""} ${challenge.isClaimed ? "claimed" : ""}">
@@ -1085,7 +1112,10 @@ function renderChallengeItem(challenge) {
             <strong>${escapeHtml(challenge.title)}</strong>
             <p>${escapeHtml(challenge.description)}</p>
           </div>
-          <span class="challenge-xp">+${challenge.xp} XP</span>
+          <div class="challenge-meta">
+            <span class="challenge-status">${statusLabel}</span>
+            <span class="challenge-xp">+${challenge.xp} XP</span>
+          </div>
         </div>
         <div class="challenge-progress-row">
           <div class="challenge-progress-track" aria-hidden="true">
@@ -1106,13 +1136,14 @@ function renderBadges() {
   dom.badgeList.innerHTML = badgeCatalog
     .map((badge) => {
       const earnedAt = getBadgeEarnedAt(badge.id);
+      const earnedText = earnedAt ? `Behaald op ${formatDateLabel(earnedAt)}` : "Nog te behalen";
       return `
         <article class="badge-item ${earnedAt ? "earned" : ""}">
           <span class="badge-mark" aria-hidden="true">${escapeHtml(badge.mark)}</span>
           <div>
             <strong>${escapeHtml(badge.title)}</strong>
             <p>${escapeHtml(badge.description)}</p>
-            <span>${earnedAt ? "Behaald" : "Nog te behalen"}</span>
+            <span>${escapeHtml(earnedText)}</span>
           </div>
         </article>
       `;
@@ -1131,12 +1162,21 @@ function claimChallenge(challengeId) {
     state.dailyChallengeClaims[dayKey] = {};
   }
   if (!state.badges || typeof state.badges !== "object") state.badges = {};
+  const isNewBadge = !state.badges[challenge.badgeId];
   state.dailyChallengeClaims[dayKey][challenge.id] = claimedAt;
   if (!state.badges[challenge.badgeId]) state.badges[challenge.badgeId] = claimedAt;
-  awardXp(challenge.xp, "Dagelijkse challenge behaald");
+  awardXp(challenge.xp);
+  showChallengeCelebration(challenge, isNewBadge);
 }
 
 function handleChallengeClick(event) {
+  const showButton = event.target.closest("[data-show-challenge-celebration]");
+  if (showButton) {
+    const challenge = getChallengeModels().find((item) => item.id === showButton.dataset.showChallengeCelebration);
+    if (challenge) showChallengeCelebration(challenge, false);
+    return;
+  }
+
   const claimButton = event.target.closest("[data-claim-challenge]");
   if (!claimButton) return;
   claimChallenge(claimButton.dataset.claimChallenge);
@@ -1643,6 +1683,24 @@ function startDailyChallengeTimer() {
   dailyChallengeTimer = window.setInterval(updateDailyChallengeTimer, 1000);
 }
 
+function showChallengeCelebration(challenge, isNewBadge) {
+  dom.challengeCelebrationMark.textContent = challenge.badge.mark;
+  dom.challengeCelebrationTitle.textContent = "Allahoema baarik!";
+  dom.challengeCelebrationMessage.textContent = `Je hebt vandaag "${challenge.title}" behaald. Ga zo door.`;
+  dom.challengeCelebrationReward.textContent = `+${challenge.xp} XP verdiend`;
+  dom.challengeCelebrationBadge.textContent = isNewBadge
+    ? `Nieuwe badge: ${challenge.badge.title}`
+    : `Badge: ${challenge.badge.title}`;
+  dom.challengeCelebrationOverlay.classList.remove("hidden");
+  dom.challengeCelebrationOverlay.setAttribute("aria-hidden", "false");
+  dom.continueChallengeCelebrationButton.focus();
+}
+
+function closeChallengeCelebration() {
+  dom.challengeCelebrationOverlay.classList.add("hidden");
+  dom.challengeCelebrationOverlay.setAttribute("aria-hidden", "true");
+}
+
 function showToast(message) {
   window.clearTimeout(toastTimer);
   dom.toast.textContent = message;
@@ -1665,14 +1723,53 @@ function escapeHtml(value) {
   });
 }
 
-function resetDemo() {
+function showResetConfirm() {
+  dom.resetConfirm.classList.remove("hidden");
+  dom.confirmResetButton.focus();
+}
+
+function hideResetConfirm() {
+  dom.resetConfirm.classList.add("hidden");
+}
+
+function resetProgress() {
   state = createInitialState();
   quizSession = createQuizSession();
   saveState();
   render();
   renderQuiz();
+  hideResetConfirm();
   closeSettings();
-  showToast("Demo is opnieuw gestart.");
+  showToast("Voortgang is gewist.");
+}
+
+async function shareApp() {
+  const shareData = {
+    title: "DeenQuest",
+    text: "Leer met DeenQuest over Islam via doelen, quizzen, XP en daily challenges.",
+    url: window.location.href,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (error) {
+      if (error.name === "AbortError") return;
+    }
+  }
+
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(shareData.url);
+      showToast("Link gekopieerd.");
+      return;
+    } catch {
+      // Fall through to the unavailable message below.
+    }
+  }
+
+  showToast("Delen is niet beschikbaar op dit apparaat.");
 }
 
 dom.tabButtons.forEach((button) => {
@@ -1754,10 +1851,25 @@ dom.darkModeToggle.addEventListener("change", (event) => setDarkMode(event.targe
 dom.settingsOverlay.addEventListener("click", (event) => {
   if (event.target === dom.settingsOverlay) closeSettings();
 });
-dom.resetDemoButton.addEventListener("click", resetDemo);
+dom.shareAppButton.addEventListener("click", shareApp);
+dom.resetProgressButton.addEventListener("click", showResetConfirm);
+dom.cancelResetButton.addEventListener("click", hideResetConfirm);
+dom.confirmResetButton.addEventListener("click", resetProgress);
+dom.closeChallengeCelebrationButton.addEventListener("click", closeChallengeCelebration);
+dom.continueChallengeCelebrationButton.addEventListener("click", closeChallengeCelebration);
+dom.challengeCelebrationOverlay.addEventListener("click", (event) => {
+  if (event.target === dom.challengeCelebrationOverlay) closeChallengeCelebration();
+});
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !dom.settingsOverlay.classList.contains("hidden")) {
+  if (event.key !== "Escape") return;
+
+  if (!dom.challengeCelebrationOverlay.classList.contains("hidden")) {
+    closeChallengeCelebration();
+    return;
+  }
+
+  if (!dom.settingsOverlay.classList.contains("hidden")) {
     closeSettings();
   }
 });
