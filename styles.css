@@ -227,6 +227,8 @@ h3 {
 .quiz-card,
 .quiz-result-card,
 .progress-hero,
+.challenge-item,
+.badge-item,
 .history-item {
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -366,6 +368,8 @@ h3 {
 .quiz-setup-card,
 .quiz-card,
 .quiz-result-card,
+.badge-section,
+.challenge-section,
 .history-section {
   margin-top: 14px;
 }
@@ -395,7 +399,8 @@ h3 {
 }
 
 .progress-count,
-.xp-chip {
+.xp-chip,
+.daily-timer {
   flex: 0 0 auto;
   border-radius: 999px;
   background: var(--gold-soft);
@@ -404,6 +409,12 @@ h3 {
   font-weight: 900;
   padding: 7px 10px;
   white-space: nowrap;
+}
+
+.daily-timer {
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-variant-numeric: tabular-nums;
 }
 
 .progress-track {
@@ -435,6 +446,160 @@ h3 {
 .home-goal-item {
   padding: 12px;
   box-shadow: none;
+}
+
+.challenge-list,
+.badge-list {
+  display: grid;
+  gap: 10px;
+}
+
+.challenge-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px 12px;
+  padding: 12px;
+  box-shadow: 0 8px 20px rgba(16, 34, 56, 0.06);
+}
+
+.challenge-item.claimed {
+  background: linear-gradient(90deg, var(--card), var(--completed-end));
+}
+
+.challenge-mark,
+.badge-mark {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold-text);
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.challenge-mark.earned,
+.badge-item.earned .badge-mark {
+  background: var(--green);
+  color: var(--on-primary);
+}
+
+.challenge-body {
+  min-width: 0;
+}
+
+.challenge-item-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.challenge-item-heading strong,
+.badge-item strong {
+  display: block;
+  color: var(--navy);
+  font-size: 0.94rem;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.challenge-item-heading p,
+.badge-item p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 780;
+  line-height: 1.35;
+}
+
+.challenge-xp {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 0.72rem;
+  font-weight: 950;
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+
+.challenge-progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.challenge-progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--progress-rest);
+}
+
+.challenge-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), var(--gold));
+}
+
+.challenge-progress-row > span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.challenge-claim-button {
+  grid-column: 2;
+  justify-self: start;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--navy);
+  padding: 8px 11px;
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.challenge-item.ready:not(.claimed) .challenge-claim-button {
+  border-color: rgba(11, 107, 85, 0.42);
+  background: var(--green);
+  color: var(--on-primary);
+}
+
+.challenge-claim-button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.badge-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.badge-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px;
+  box-shadow: 0 8px 20px rgba(16, 34, 56, 0.06);
+  opacity: 0.68;
+}
+
+.badge-item.earned {
+  opacity: 1;
+}
+
+.badge-item span:not(.badge-mark) {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
 }
 
 .mini-link-button {
@@ -500,6 +665,7 @@ h3 {
 }
 
 .step-list {
+  --step-indent: 42px;
   display: grid;
   gap: 12px;
   margin: 16px 0 0;
@@ -627,6 +793,8 @@ h3 {
 
 .step-posture {
   grid-template-columns: 1fr;
+  width: calc(100% + var(--step-indent));
+  margin-left: calc(var(--step-indent) * -1);
   margin-top: 10px;
 }
 
@@ -1125,6 +1293,114 @@ input:focus {
   line-height: 1.5;
 }
 
+.quiz-mistake-review {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  text-align: left;
+}
+
+.quiz-review-heading,
+.quiz-perfect-review {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--input);
+  padding: 12px;
+}
+
+.quiz-review-heading strong,
+.quiz-perfect-review strong {
+  font-size: 0.92rem;
+  font-weight: 950;
+}
+
+.quiz-review-heading span,
+.quiz-perfect-review span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-align: right;
+}
+
+.quiz-perfect-review {
+  border-color: rgba(11, 107, 85, 0.36);
+  background: var(--green-soft);
+}
+
+.quiz-perfect-review strong,
+.correct-answer {
+  color: var(--green-dark);
+}
+
+.quiz-mistake-list {
+  display: grid;
+  gap: 10px;
+}
+
+.quiz-mistake-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--input);
+  padding: 12px;
+}
+
+.mistake-number {
+  color: var(--danger);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.quiz-mistake-item h4 {
+  margin: 5px 0 10px;
+  font-size: 0.96rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.mistake-answers {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.mistake-answers div {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+
+.mistake-answers dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.mistake-answers dd {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.wrong-answer {
+  color: var(--danger);
+}
+
+.quiz-mistake-item p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 760;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .hidden {
   display: none;
 }
@@ -1203,6 +1479,7 @@ input:focus {
 }
 
 .tab-button {
+  position: relative;
   display: grid;
   min-width: 0;
   min-height: 58px;
@@ -1230,6 +1507,18 @@ input:focus {
 .tab-button.active {
   background: var(--green-soft);
   color: var(--green-dark);
+}
+
+.tab-button.has-alert::after {
+  position: absolute;
+  top: 8px;
+  right: max(12px, 22%);
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--tab-surface);
+  border-radius: 50%;
+  background: var(--danger);
+  content: "";
 }
 
 .settings-overlay {
@@ -1385,6 +1674,14 @@ input:focus {
 
   .input-row {
     grid-template-columns: 1fr;
+  }
+
+  .badge-list {
+    grid-template-columns: 1fr;
+  }
+
+  .challenge-item-heading {
+    display: grid;
   }
 
   .progress-hero {

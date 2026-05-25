@@ -6,6 +6,108 @@ const XP_PER_LEVEL = 100;
 const QUIZ_QUESTION_COUNT = 10;
 const QUIZ_PASS_SCORE = 6;
 
+const badgeCatalog = [
+  {
+    id: "goal-starter",
+    title: "Doelstarter",
+    description: "Je hebt je eerste persoonlijke doel afgerond.",
+    mark: "DS",
+  },
+  {
+    id: "quiz-starter",
+    title: "Quizstarter",
+    description: "Je hebt je eerste quizronde afgemaakt.",
+    mark: "QS",
+  },
+  {
+    id: "kenniszoeker",
+    title: "Kenniszoeker",
+    description: "Je haalde minimaal 6 van de 10 goed.",
+    mark: "KZ",
+  },
+  {
+    id: "doorzetter",
+    title: "Doorzetter",
+    description: "Je rondde drie persoonlijke doelen af.",
+    mark: "DZ",
+  },
+  {
+    id: "ronde-maker",
+    title: "Rondemaker",
+    description: "Je maakte drie quizrondes af.",
+    mark: "RM",
+  },
+  {
+    id: "perfecte-ronde",
+    title: "Perfecte ronde",
+    description: "Je haalde een quiz met alles goed.",
+    mark: "PR",
+  },
+];
+
+const challengeCatalog = [
+  {
+    id: "first-goal",
+    title: "Dagdoel",
+    description: "Voltooi vandaag 1 persoonlijk doel.",
+    xp: 20,
+    target: 1,
+    badgeId: "goal-starter",
+    progressText: (value, target) => `${value}/${target} doel`,
+    getProgress: () => getTodaysCompletedGoalCount(),
+  },
+  {
+    id: "first-quiz",
+    title: "Quiz van vandaag",
+    description: "Maak vandaag 1 quiz helemaal af.",
+    xp: 20,
+    target: 1,
+    badgeId: "quiz-starter",
+    progressText: (value, target) => `${value}/${target} quiz`,
+    getProgress: () => getTodaysFinishedQuizCount(),
+  },
+  {
+    id: "pass-quiz",
+    title: "Goede ronde",
+    description: "Haal vandaag minimaal 6 van de 10 goed.",
+    xp: 30,
+    target: 1,
+    badgeId: "kenniszoeker",
+    progressText: (value, target) => `${value}/${target} gehaald`,
+    getProgress: () => getTodaysPassedQuizCount(),
+  },
+  {
+    id: "three-goals",
+    title: "Focusmoment",
+    description: "Voltooi vandaag 2 persoonlijke doelen.",
+    xp: 35,
+    target: 2,
+    badgeId: "doorzetter",
+    progressText: (value, target) => `${value}/${target} doelen`,
+    getProgress: () => getTodaysCompletedGoalCount(),
+  },
+  {
+    id: "three-quizzes",
+    title: "Quizritme",
+    description: "Maak vandaag 2 quizrondes af.",
+    xp: 40,
+    target: 2,
+    badgeId: "ronde-maker",
+    progressText: (value, target) => `${value}/${target} quizzen`,
+    getProgress: () => getTodaysFinishedQuizCount(),
+  },
+  {
+    id: "perfect-quiz",
+    title: "Perfect vandaag",
+    description: "Haal vandaag een quizronde met 10 van de 10 goed.",
+    xp: 50,
+    target: 1,
+    badgeId: "perfecte-ronde",
+    progressText: (value, target) => `${value}/${target} perfect`,
+    getProgress: () => getTodaysPerfectQuizCount(),
+  },
+];
+
 const defaultGoals = [
   "Leer Surah Al-Fatiha",
   "Bid Fajr op tijd",
@@ -583,6 +685,7 @@ const allQuizQuestions = [...quizQuestionBank, ...extraQuizQuestions];
 const dom = {
   views: document.querySelectorAll(".view"),
   tabButtons: document.querySelectorAll(".tab-button"),
+  progressTabButton: document.querySelector('[data-view="progress"]'),
   quickViewButtons: document.querySelectorAll("[data-go-view]"),
   toast: document.querySelector("#toast"),
   settingsButton: document.querySelector("#settingsButton"),
@@ -616,18 +719,25 @@ const dom = {
   quizResultCard: document.querySelector("#quizResultCard"),
   quizResultTitle: document.querySelector("#quizResultTitle"),
   quizResultText: document.querySelector("#quizResultText"),
+  quizMistakeReview: document.querySelector("#quizMistakeReview"),
   newQuizButton: document.querySelector("#newQuizButton"),
   changeQuizButton: document.querySelector("#changeQuizButton"),
   progressLevelChip: document.querySelector("#progressLevelChip"),
   progressTotalXp: document.querySelector("#progressTotalXp"),
   progressRing: document.querySelector("#progressRing"),
   ringPercent: document.querySelector("#ringPercent"),
+  badgeCount: document.querySelector("#badgeCount"),
+  badgeList: document.querySelector("#badgeList"),
+  dailyChallengeTimer: document.querySelector("#dailyChallengeTimer"),
+  challengeList: document.querySelector("#challengeList"),
   quizHistoryList: document.querySelector("#quizHistoryList"),
 };
 
 let state = loadState();
 let quizSession = createQuizSession();
 let toastTimer;
+let dailyChallengeTimer;
+let activeDailyChallengeKey = getLocalDayKey();
 let isDarkMode = localStorage.getItem(THEME_KEY) === "dark";
 
 applyTheme();
@@ -645,6 +755,9 @@ function createInitialState() {
     })),
     quizResults: [],
     quizProgress: {},
+    challengeClaims: {},
+    dailyChallengeClaims: {},
+    badges: {},
   };
 }
 
@@ -659,6 +772,12 @@ function loadState() {
       goals: Array.isArray(parsed.goals) ? parsed.goals : createInitialState().goals,
       quizResults: Array.isArray(parsed.quizResults) ? parsed.quizResults : [],
       quizProgress: parsed.quizProgress && typeof parsed.quizProgress === "object" ? parsed.quizProgress : {},
+      challengeClaims: normalizeRecord(parsed.challengeClaims),
+      dailyChallengeClaims:
+        parsed.dailyChallengeClaims && typeof parsed.dailyChallengeClaims === "object"
+          ? parsed.dailyChallengeClaims
+          : {},
+      badges: normalizeRecord(parsed.badges),
     };
   } catch {
     return createInitialState();
@@ -667,6 +786,49 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function normalizeRecord(value) {
+  if (Array.isArray(value)) {
+    return value.reduce((record, item) => {
+      if (typeof item === "string") record[item] = new Date().toISOString();
+      if (item && typeof item === "object" && typeof item.id === "string") {
+        record[item.id] = item.earnedAt || item.claimedAt || new Date().toISOString();
+      }
+      return record;
+    }, {});
+  }
+
+  return value && typeof value === "object" ? value : {};
+}
+
+function getLocalDayKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function isToday(isoDate, dayKey = getLocalDayKey()) {
+  return Boolean(isoDate) && getLocalDayKey(new Date(isoDate)) === dayKey;
+}
+
+function getDailyClaims(dayKey = getLocalDayKey()) {
+  const claims = state.dailyChallengeClaims?.[dayKey];
+  return claims && typeof claims === "object" ? claims : {};
+}
+
+function getNextDailyReset() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+}
+
+function formatTimeLeft(milliseconds) {
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 function getLevelInfo(xp = state.xp) {
@@ -717,6 +879,7 @@ function render() {
   renderDailyAyah();
   renderHomeGoals();
   renderGoals();
+  renderChallenges();
   renderQuizSetup();
   renderProgress();
 }
@@ -815,6 +978,170 @@ function renderGoals() {
     .join("");
 }
 
+function getTodaysCompletedGoalCount(dayKey = getLocalDayKey()) {
+  return state.goals.filter((goal) => goal.completed && isToday(goal.completedAt, dayKey)).length;
+}
+
+function getTodaysFinishedQuizCount(dayKey = getLocalDayKey()) {
+  return state.quizResults.filter((result) => isToday(result.date, dayKey)).length;
+}
+
+function getTodaysPassedQuizCount(dayKey = getLocalDayKey()) {
+  return state.quizResults.filter(
+    (result) =>
+      isToday(result.date, dayKey) &&
+      Number(result.score) >= QUIZ_PASS_SCORE &&
+      Number(result.total) >= QUIZ_QUESTION_COUNT
+  ).length;
+}
+
+function getTodaysPerfectQuizCount(dayKey = getLocalDayKey()) {
+  return state.quizResults.filter(
+    (result) =>
+      isToday(result.date, dayKey) &&
+      Number(result.total) > 0 &&
+      Number(result.score) === Number(result.total)
+  ).length;
+}
+
+function getBadgeById(badgeId) {
+  return badgeCatalog.find((badge) => badge.id === badgeId);
+}
+
+function getDailyBadgeEarnedAt(badgeId) {
+  const challenge = challengeCatalog.find((item) => item.badgeId === badgeId);
+  if (!challenge) return null;
+
+  return Object.values(state.dailyChallengeClaims || {})
+    .map((claims) => (claims && typeof claims === "object" ? claims[challenge.id] : null))
+    .find(Boolean);
+}
+
+function getBadgeEarnedAt(badgeId) {
+  const claimedChallenge = challengeCatalog.find(
+    (challenge) => challenge.badgeId === badgeId && state.challengeClaims?.[challenge.id]
+  );
+  return (
+    state.badges?.[badgeId] ||
+    getDailyBadgeEarnedAt(badgeId) ||
+    (claimedChallenge ? state.challengeClaims[claimedChallenge.id] : null)
+  );
+}
+
+function getChallengeModels() {
+  const dayKey = getLocalDayKey();
+  const dailyClaims = getDailyClaims(dayKey);
+
+  return challengeCatalog.map((challenge) => {
+    const value = challenge.getProgress();
+    const displayValue = Math.min(value, challenge.target);
+    const isClaimed = Boolean(dailyClaims[challenge.id]);
+    const isReady = value >= challenge.target;
+    const progressPercent = Math.min(100, Math.round((displayValue / challenge.target) * 100));
+
+    return {
+      ...challenge,
+      badge: getBadgeById(challenge.badgeId),
+      displayValue,
+      isClaimed,
+      isReady,
+      progressPercent,
+      progressLabel: challenge.progressText(displayValue, challenge.target),
+    };
+  });
+}
+
+function renderChallenges() {
+  const challenges = getChallengeModels().sort((a, b) => {
+    if (a.isClaimed !== b.isClaimed) return a.isClaimed ? 1 : -1;
+    if (a.isReady !== b.isReady) return a.isReady ? -1 : 1;
+    return b.progressPercent - a.progressPercent;
+  });
+  const claimableCount = challenges.filter((challenge) => challenge.isReady && !challenge.isClaimed).length;
+
+  dom.challengeList.innerHTML = challenges.map((challenge) => renderChallengeItem(challenge)).join("");
+  dom.progressTabButton.classList.toggle("has-alert", claimableCount > 0);
+  dom.progressTabButton.setAttribute(
+    "aria-label",
+    claimableCount > 0 ? `Progressie, ${claimableCount} dagelijkse challenge te claimen` : "Progressie"
+  );
+  renderBadges();
+}
+
+function renderChallengeItem(challenge) {
+  const buttonLabel = challenge.isClaimed
+    ? "Behaald"
+    : challenge.isReady
+      ? `Claim +${challenge.xp} XP`
+      : "Nog bezig";
+  const buttonAttributes = challenge.isReady && !challenge.isClaimed ? `data-claim-challenge="${challenge.id}"` : "disabled";
+
+  return `
+    <article class="challenge-item ${challenge.isReady ? "ready" : ""} ${challenge.isClaimed ? "claimed" : ""}">
+      <span class="challenge-mark ${challenge.isClaimed ? "earned" : ""}" aria-hidden="true">${escapeHtml(challenge.badge.mark)}</span>
+      <div class="challenge-body">
+        <div class="challenge-item-heading">
+          <div>
+            <strong>${escapeHtml(challenge.title)}</strong>
+            <p>${escapeHtml(challenge.description)}</p>
+          </div>
+          <span class="challenge-xp">+${challenge.xp} XP</span>
+        </div>
+        <div class="challenge-progress-row">
+          <div class="challenge-progress-track" aria-hidden="true">
+            <span class="challenge-progress-fill" style="width: ${challenge.progressPercent}%"></span>
+          </div>
+          <span>${escapeHtml(challenge.progressLabel)}</span>
+        </div>
+      </div>
+      <button class="challenge-claim-button" type="button" ${buttonAttributes}>${buttonLabel}</button>
+    </article>
+  `;
+}
+
+function renderBadges() {
+  const earnedCount = badgeCatalog.filter((badge) => getBadgeEarnedAt(badge.id)).length;
+  dom.badgeCount.textContent = `${earnedCount}/${badgeCatalog.length}`;
+
+  dom.badgeList.innerHTML = badgeCatalog
+    .map((badge) => {
+      const earnedAt = getBadgeEarnedAt(badge.id);
+      return `
+        <article class="badge-item ${earnedAt ? "earned" : ""}">
+          <span class="badge-mark" aria-hidden="true">${escapeHtml(badge.mark)}</span>
+          <div>
+            <strong>${escapeHtml(badge.title)}</strong>
+            <p>${escapeHtml(badge.description)}</p>
+            <span>${earnedAt ? "Behaald" : "Nog te behalen"}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function claimChallenge(challengeId) {
+  const challenge = getChallengeModels().find((item) => item.id === challengeId);
+  if (!challenge || !challenge.isReady || challenge.isClaimed) return;
+
+  const claimedAt = new Date().toISOString();
+  const dayKey = getLocalDayKey();
+  if (!state.dailyChallengeClaims || typeof state.dailyChallengeClaims !== "object") state.dailyChallengeClaims = {};
+  if (!state.dailyChallengeClaims[dayKey] || typeof state.dailyChallengeClaims[dayKey] !== "object") {
+    state.dailyChallengeClaims[dayKey] = {};
+  }
+  if (!state.badges || typeof state.badges !== "object") state.badges = {};
+  state.dailyChallengeClaims[dayKey][challenge.id] = claimedAt;
+  if (!state.badges[challenge.badgeId]) state.badges[challenge.badgeId] = claimedAt;
+  awardXp(challenge.xp, "Dagelijkse challenge behaald");
+}
+
+function handleChallengeClick(event) {
+  const claimButton = event.target.closest("[data-claim-challenge]");
+  if (!claimButton) return;
+  claimChallenge(claimButton.dataset.claimChallenge);
+}
+
 function makeQuestions(subject, difficulty, items) {
   return items.map(([question, answers, correct]) => ({
     subject,
@@ -888,6 +1215,23 @@ function getQuestionPool(subjectId, difficultyId) {
 function getQuizQuestions(subjectId, difficultyId) {
   const pool = getQuestionPool(subjectId, difficultyId);
   return shuffleItems(pool).slice(0, QUIZ_QUESTION_COUNT);
+}
+
+function getQuestionExplanation(question) {
+  if (question.explanation) return question.explanation;
+
+  const correctAnswer = question.answers[question.correct];
+  const subjectHints = {
+    basis: "Dit is een basisbegrip dat vaak terugkomt in het dagelijks leren.",
+    gebed: "Dit helpt je de volgorde en betekenis van het gebed beter herkennen.",
+    quran: "Dit gaat over hoe de Qur'an is opgebouwd, gelezen of geopenbaard.",
+    profeten: "Dit hoort bij het verhaal en de lessen van deze profeet.",
+    namen: "Deze naam leert je een eigenschap van Allah herkennen.",
+  };
+
+  return `Het juiste antwoord is "${correctAnswer}". ${
+    subjectHints[question.subject] || "Onthoud dit kernpunt voor de volgende ronde."
+  }`;
 }
 
 function shuffleItems(items) {
@@ -1032,10 +1376,59 @@ function renderQuizResult() {
   const subject = getSubjectById(quizSession.subjectId);
   const xpEarned = QUIZ_COMPLETION_XP;
   const percentage = Math.round((score / quizSession.questions.length) * 100);
+  const mistakes = quizSession.questions
+    .map((question, index) => {
+      const selectedIndex = quizSession.selectedAnswers[index];
+      return {
+        index,
+        question,
+        selectedIndex,
+        selectedAnswer: Number.isInteger(selectedIndex) ? question.answers[selectedIndex] : "Geen antwoord",
+        correctAnswer: question.answers[question.correct],
+        explanation: getQuestionExplanation(question),
+      };
+    })
+    .filter((item) => item.selectedIndex !== item.question.correct);
 
   dom.quizResultTitle.textContent =
     percentage >= 80 ? "Sterke ronde" : percentage >= 50 ? "Goed geoefend" : "Blijf rustig oefenen";
   dom.quizResultText.textContent = `${subject.label} - ${difficulty.label}: ${score} van de ${quizSession.questions.length} goed en ${xpEarned} XP verdiend.`;
+  dom.quizMistakeReview.innerHTML = mistakes.length
+    ? `
+      <div class="quiz-review-heading">
+        <strong>Nog even leren</strong>
+        <span>${mistakes.length} ${mistakes.length === 1 ? "fout" : "fouten"}</span>
+      </div>
+      <div class="quiz-mistake-list">
+        ${mistakes
+          .map(
+            (mistake) => `
+              <article class="quiz-mistake-item">
+                <span class="mistake-number">Vraag ${mistake.index + 1}</span>
+                <h4>${escapeHtml(mistake.question.question)}</h4>
+                <dl class="mistake-answers">
+                  <div>
+                    <dt>Jouw antwoord</dt>
+                    <dd class="wrong-answer">${escapeHtml(mistake.selectedAnswer)}</dd>
+                  </div>
+                  <div>
+                    <dt>Juiste antwoord</dt>
+                    <dd class="correct-answer">${escapeHtml(mistake.correctAnswer)}</dd>
+                  </div>
+                </dl>
+                <p>${escapeHtml(mistake.explanation)}</p>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    `
+    : `
+      <div class="quiz-perfect-review">
+        <strong>Geen fouten deze ronde.</strong>
+        <span>Je had alle antwoorden goed.</span>
+      </div>
+    `;
 }
 
 function renderProgress() {
@@ -1103,6 +1496,7 @@ function createQuizSession() {
     currentIndex: 0,
     selectedAnswer: null,
     answers: [],
+    selectedAnswers: [],
     started: false,
     finished: false,
     xpGranted: false,
@@ -1116,6 +1510,7 @@ function selectAnswer(answerIndex) {
   const isCorrect = answerIndex === currentQuestion.correct;
   quizSession.selectedAnswer = answerIndex;
   quizSession.answers[quizSession.currentIndex] = isCorrect;
+  quizSession.selectedAnswers[quizSession.currentIndex] = answerIndex;
 
   dom.answerList.querySelectorAll(".answer-button").forEach((button) => {
     const buttonIndex = Number(button.dataset.answerIndex);
@@ -1205,6 +1600,7 @@ function startQuiz(subjectId = quizSession.subjectId, difficultyId = quizSession
     currentIndex: 0,
     selectedAnswer: null,
     answers: [],
+    selectedAnswers: [],
     started: true,
     finished: false,
     xpGranted: false,
@@ -1228,6 +1624,23 @@ function showQuizSetup() {
     difficultyId: quizSession.difficultyId,
   };
   renderQuiz();
+}
+
+function updateDailyChallengeTimer() {
+  const dayKey = getLocalDayKey();
+  if (dayKey !== activeDailyChallengeKey) {
+    activeDailyChallengeKey = dayKey;
+    renderChallenges();
+  }
+
+  const timeLeft = getNextDailyReset().getTime() - Date.now();
+  dom.dailyChallengeTimer.textContent = formatTimeLeft(timeLeft);
+}
+
+function startDailyChallengeTimer() {
+  window.clearInterval(dailyChallengeTimer);
+  updateDailyChallengeTimer();
+  dailyChallengeTimer = window.setInterval(updateDailyChallengeTimer, 1000);
 }
 
 function showToast(message) {
@@ -1302,6 +1715,8 @@ dom.homeGoalList.addEventListener("click", (event) => {
   completeGoal(completeButton.dataset.completeGoal);
 });
 
+dom.challengeList.addEventListener("click", handleChallengeClick);
+
 dom.quizSetupCard.addEventListener("click", (event) => {
   const backButton = event.target.closest("[data-back-to-subjects]");
   if (backButton) {
@@ -1357,3 +1772,4 @@ if ("serviceWorker" in navigator) {
 
 render();
 renderQuiz();
+startDailyChallengeTimer();

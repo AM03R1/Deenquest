@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=29" />
+    <link rel="stylesheet" href="styles.css?v=33" />
   </head>
   <body>
     <div class="app-shell">
@@ -158,6 +158,7 @@
             <p class="eyebrow">Quiz afgerond</p>
             <h3 id="quizResultTitle">Mooi gedaan</h3>
             <p id="quizResultText"></p>
+            <div class="quiz-mistake-review" id="quizMistakeReview" aria-live="polite"></div>
             <div class="quiz-result-actions">
               <button class="secondary-button" id="changeQuizButton" type="button">Andere keuze</button>
               <button class="primary-button" id="newQuizButton" type="button">Nieuwe ronde</button>
@@ -366,6 +367,28 @@
             </div>
           </article>
 
+          <section class="badge-section">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Badges</p>
+                <h3>Behaalde badges</h3>
+              </div>
+              <span class="xp-chip" id="badgeCount">0/6</span>
+            </div>
+            <div class="badge-list" id="badgeList" aria-live="polite"></div>
+          </section>
+
+          <section class="challenge-section">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Daily challenges</p>
+                <h3>Vandaag te behalen</h3>
+              </div>
+              <span class="daily-timer" id="dailyChallengeTimer" aria-live="polite">00:00:00</span>
+            </div>
+            <div class="challenge-list" id="challengeList" aria-live="polite"></div>
+          </section>
+
           <section class="history-section">
             <div class="section-heading compact-heading">
               <h3>Laatste quizresultaten</h3>
@@ -451,6 +474,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=29" defer></script>
+    <script src="app.js?v=33" defer></script>
   </body>
 </html>
