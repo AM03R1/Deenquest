@@ -5,6 +5,7 @@ const QUIZ_COMPLETION_XP = 15;
 const XP_PER_LEVEL = 100;
 const QUIZ_QUESTION_COUNT = 10;
 const QUIZ_PASS_SCORE = 6;
+const RECENT_QUIZ_QUESTION_LIMIT = 60;
 
 const badgeCatalog = [
   {
@@ -218,6 +219,623 @@ const quizDifficulties = [
     description: "Voor wie de basis sterk beheerst.",
   },
 ];
+
+const quizTheoryBank = {
+  basis: {
+    beginner: {
+      title: "Basiskennis: startpunten",
+      intro:
+        "Deze quiz gaat over kernbegrippen die vaak terugkomen in het dagelijks leren: de vijf zuilen, Ramadan, dua en simpele woorden van dankbaarheid.",
+      points: [
+        "De Islam heeft vijf zuilen: shahada, gebed, zakat, vasten in Ramadan en hajj.",
+        "Shahada is de geloofsgetuigenis en wordt vaak als eerste zuil genoemd.",
+        "Dua betekent smeekbede; daarmee vraag je Allah om hulp, leiding of vergeving.",
+        "Halal betekent toegestaan, terwijl haram verboden betekent.",
+      ],
+      terms: [
+        ["Bismillah", "In naam van Allah."],
+        ["Alhamdulillah", "Alle lof is aan Allah."],
+        ["Zakat", "Liefdadigheid die bij de vijf zuilen hoort."],
+      ],
+    },
+    advanced: {
+      title: "Basiskennis: begrippen",
+      intro:
+        "Hier oefen je met woorden die je helpen begrijpen hoe moslims leren, handelen en hun intentie zuiver houden.",
+      points: [
+        "Sunnah is het voorbeeld van de Profeet Muhammad.",
+        "Een hadith is een overlevering over woorden, daden of goedkeuringen van de Profeet.",
+        "Niyyah betekent intentie; bij goede daden telt waarom je iets doet.",
+        "Tawhid betekent Allah als de Ene aanbidden en niets met Hem vereenzelvigen.",
+      ],
+      terms: [
+        ["Sabr", "Geduld."],
+        ["Ummah", "De gemeenschap."],
+        ["Shukr", "Dankbaarheid."],
+      ],
+    },
+    expert: {
+      title: "Basiskennis: verdieping",
+      intro:
+        "Deze ronde gebruikt verdiepende begrippen rond geloof, karakter en vertrouwen op Allah na eigen inspanning.",
+      points: [
+        "Ihsan is aanbidden alsof je Allah ziet; ook al zie jij Hem niet, Hij ziet jou.",
+        "Taqwa betekent bewustzijn van Allah en voorzichtig zijn met je keuzes.",
+        "Tawakkul is vertrouwen op Allah nadat je doet wat binnen jouw vermogen ligt.",
+        "Fiqh gaat over begrip van islamitische regels; aqidah gaat over geloofsleer.",
+      ],
+      terms: [
+        ["Tawbah", "Berouw tonen en terugkeren naar Allah."],
+        ["Ikhlas", "Oprechtheid."],
+        ["Adab", "Goede manieren."],
+      ],
+    },
+  },
+  gebed: {
+    beginner: {
+      title: "Gebed: basis",
+      intro:
+        "Deze quiz gaat over de verplichte gebeden, voorbereiding en herkenbare woorden rond het gebed.",
+      points: [
+        "Er zijn vijf verplichte gebeden per dag: Fajr, Dhuhr, Asr, Maghrib en Isha.",
+        "Fajr is rond de dageraad en Maghrib is na zonsondergang.",
+        "Voor het gebed verricht je wudhu als je geen wudhu hebt.",
+        "Tijdens het gebed richt je je naar de qiblah.",
+      ],
+      terms: [
+        ["Adhan", "De oproep tot gebed."],
+        ["Takbir", "Allahu Akbar zeggen."],
+        ["Qiblah", "De gebedsrichting."],
+      ],
+    },
+    advanced: {
+      title: "Gebed: houdingen",
+      intro:
+        "In deze ronde herken je de volgorde, houdingen en afsluiting van het gebed.",
+      points: [
+        "Qiyam is staan in het gebed.",
+        "Ruku is de buiging en sujud is de neerknieling.",
+        "Na ruku kom je weer rechtop voordat je naar sujud gaat.",
+        "Het gebed sluit je af met salam; aan het einde zit je voor de tashahhud.",
+      ],
+      terms: [
+        ["Imam", "Degene die voorgaat in het gebed."],
+        ["Tashahhud", "Het zitten met de geloofsgetuigenis aan het einde."],
+        ["Sujud", "Neerknielen."],
+      ],
+    },
+    expert: {
+      title: "Gebed: verdieping",
+      intro:
+        "Deze quiz vraagt om meer detail over concentratie, extra gebeden en bijzondere situaties in het gebed.",
+      points: [
+        "Al-Fatiha wordt in elke rak'ah gelezen.",
+        "Khushu' betekent rustige concentratie en aanwezigheid in het gebed.",
+        "Bij het opkomen uit ruku zeg je: Sami'a Allahu liman hamidah.",
+        "Sujud as-sahw is een neerknieling bij vergeetachtigheid.",
+      ],
+      terms: [
+        ["Jama'ah", "Gezamenlijk gebed."],
+        ["Witr", "Gebed na Isha en voor Fajr."],
+        ["Iqamah", "Aankondiging dat het gebed begint."],
+      ],
+    },
+  },
+  quran: {
+    beginner: {
+      title: "Qur'an: basis",
+      intro:
+        "Deze quiz gaat over hoe de Qur'an is opgebouwd, in welke taal hij werd geopenbaard en welke surahs je vaak tegenkomt.",
+      points: [
+        "De Qur'an werd in het Arabisch geopenbaard.",
+        "De Qur'an heeft 114 surahs.",
+        "Al-Fatiha wordt in elke rak'ah van het gebed gelezen.",
+        "Een ayah is een vers en reciteren betekent de Qur'an mooi en zorgvuldig lezen.",
+      ],
+      terms: [
+        ["Jibril", "De engel die de openbaring bracht."],
+        ["Al-Ikhlas", "Surah die begint met Qul huwa Allahu ahad."],
+        ["Mushaf", "De Qur'an als geschreven boek."],
+      ],
+    },
+    advanced: {
+      title: "Qur'an: kennis",
+      intro:
+        "Hier oefen je met openbaring, bekende surahs en begrippen rond uitleg en recitatie.",
+      points: [
+        "Al-Baqarah is de langste surah in de Qur'an.",
+        "De eerste openbaring begon met Iqra in de grot Hira.",
+        "Al-Ikhlas benadrukt kort en krachtig tawhid.",
+        "Tajwid zijn regels voor Qur'an-recitatie; tafsir is uitleg van de Qur'an.",
+      ],
+      terms: [
+        ["Makki", "Meestal uit de Mekkaanse periode."],
+        ["Madani", "Meestal uit de Medinese periode."],
+        ["Hafiz", "Iemand die de Qur'an heeft gememoriseerd."],
+      ],
+    },
+    expert: {
+      title: "Qur'an: verdieping",
+      intro:
+        "Deze ronde gebruikt preciezere termen over indeling, overlevering, recitatiestijlen en bekende plaatsen in de Qur'an.",
+      points: [
+        "Ayat al-Kursi staat in Al-Baqarah 2:255.",
+        "De Qur'an wordt vaak verdeeld in 30 juz.",
+        "Surah Yasin staat bekend als het hart van de Qur'an.",
+        "At-Tawbah begint in de mushaf niet met Bismillah.",
+      ],
+      terms: [
+        ["Sabab an-nuzul", "Aanleiding van openbaring."],
+        ["Mutawatir", "Breed en sterk overgeleverd."],
+        ["Waqf", "Pauzeren of stoppen in tajwid."],
+      ],
+    },
+  },
+  profeten: {
+    beginner: {
+      title: "Profeten: basisverhalen",
+      intro:
+        "Deze quiz gaat over bekende profeten en herkenbare gebeurtenissen uit hun verhalen.",
+      points: [
+        "Nuh bouwde de ark op bevel van Allah.",
+        "Muhammad is de laatste profeet in de Islam.",
+        "Ibrahim wordt sterk verbonden met de Ka'bah.",
+        "Yunus werd opgeslokt door een grote vis.",
+      ],
+      terms: [
+        ["Musa", "Sprak met Allah."],
+        ["Isa", "Zoon van Maryam en geboren zonder vader."],
+        ["Dawud", "Kreeg de Zabur."],
+      ],
+    },
+    advanced: {
+      title: "Profeten: lessen",
+      intro:
+        "Hier herken je profeten aan hun volk, familie, beproevingen en bijzondere gaven.",
+      points: [
+        "Musa werd gered toen de zee spleet.",
+        "Yusuf staat bekend om zijn droom, beproevingen in Egypte en het uitleggen van dromen.",
+        "Salih werd naar Thamud gestuurd en Hud naar het volk Ad.",
+        "Sulayman stond bekend om wijsheid en koningschap.",
+      ],
+      terms: [
+        ["Harun", "Broer van Musa."],
+        ["Ibrahim", "Werd beproefd met het offer."],
+        ["Maryam", "Moeder van Isa."],
+      ],
+    },
+    expert: {
+      title: "Profeten: verdieping",
+      intro:
+        "Deze ronde vraagt om specifieke bijnamen, familiebanden en diepere herkenningspunten uit profetenverhalen.",
+      points: [
+        "Yunus wordt Dhun-Nun genoemd.",
+        "Ibrahim was de vader van Ismail; Ismail is sterk verbonden met de Ka'bah.",
+        "Ayyub staat bekend om grote sabr tijdens ziekte.",
+        "Zakariya was de vader van Yahya.",
+      ],
+      terms: [
+        ["Sulayman", "Begreep de taal van vogels."],
+        ["Yusuf", "Werd door zijn broers in een put gegooid."],
+        ["Dawud", "Werd koning na Talut."],
+      ],
+    },
+  },
+  namen: {
+    beginner: {
+      title: "Namen van Allah: basis",
+      intro:
+        "Deze quiz helpt je bekende Namen van Allah herkennen en koppelen aan hun betekenis.",
+      points: [
+        "Ar-Rahman betekent De Meest Barmhartige.",
+        "Al-Alim betekent De Alwetende.",
+        "Al-Malik betekent De Koning.",
+        "Ar-Razzaq betekent De Voorziener.",
+      ],
+      terms: [
+        ["Al-Wadud", "De Liefdevolle."],
+        ["As-Sami", "De Alhorende."],
+        ["Al-Basir", "De Alziende."],
+      ],
+    },
+    advanced: {
+      title: "Namen van Allah: betekenis",
+      intro:
+        "Hier oefen je met Namen die eigenschappen als scheppen, vergeven, vrede, bescherming en rechtvaardigheid laten zien.",
+      points: [
+        "Al-Khaliq betekent De Schepper.",
+        "Al-Ghaffar betekent De Vergever.",
+        "As-Salam betekent De Bron van vrede.",
+        "Al-Qayyum betekent De Zelfbestaande Onderhouder.",
+      ],
+      terms: [
+        ["Al-Fattah", "De Openaar."],
+        ["Al-Hafiz", "De Beschermer."],
+        ["Al-Karim", "De Edelmoedige."],
+      ],
+    },
+    expert: {
+      title: "Namen van Allah: verdieping",
+      intro:
+        "Deze ronde gaat over Namen die subtiele, wijze en allesomvattende eigenschappen van Allah aanduiden.",
+      points: [
+        "Al-Latif betekent De Zachtmoedige Subtiele.",
+        "Al-Hakeem betekent De Alwijze.",
+        "Al-Quddus betekent De Heilige.",
+        "Al-Awwal betekent De Eerste en Al-Akhir betekent De Laatste.",
+      ],
+      terms: [
+        ["Al-Batin", "De Verborgene."],
+        ["Al-Matin", "De Standvastige Sterke."],
+        ["Al-Jami", "De Verzamelaar."],
+      ],
+    },
+  },
+};
+
+const quizTheoryStudyAddOns = {
+  basis: {
+    beginner: {
+      points: [
+        "Leer de vijf zuilen in vaste volgorde: shahada, salah, zakat, sawm en hajj.",
+        "Ramadan hoort bij sawm: moslims vasten deze maand van fajr tot zonsondergang.",
+        "Vrijdag is belangrijk door Jumu'ah, het gezamenlijke vrijdaggebed.",
+        "Bij basisvragen helpt het om eerst te herkennen of de vraag over geloof, aanbidding of gedrag gaat.",
+      ],
+      terms: [
+        ["Salah", "Het gebed; een van de vijf zuilen."],
+        ["Sawm", "Vasten, vooral bekend door Ramadan."],
+        ["Hajj", "De bedevaart naar Mekka voor wie daartoe in staat is."],
+        ["Dua", "Een persoonlijke smeekbede aan Allah."],
+      ],
+      checkpoints: [
+        "Kun je de vijf zuilen hardop noemen zonder te spieken?",
+        "Weet je het verschil tussen halal, haram en een verplicht onderdeel?",
+        "Herken je korte woorden zoals Bismillah, Alhamdulillah en dua in een vraag?",
+      ],
+      examTips: [
+        "Bij meerkeuzevragen staan vaak twee bekende woorden tussen de opties. Kies niet wat bekend klinkt, maar wat precies bij de omschrijving past.",
+      ],
+    },
+    advanced: {
+      points: [
+        "Sunnah en hadith horen bij elkaar, maar zijn niet hetzelfde: sunnah is het voorbeeld, hadith is een overlevering.",
+        "Een goede daad begint met niyyah. Dezelfde handeling kan anders wegen door de intentie erachter.",
+        "Tawhid is de basis van geloof: Allah alleen aanbidden.",
+        "Sabr is actief geduld: doorgaan met het goede en jezelf beheersen bij moeite.",
+        "Shukr is dankbaarheid met hart, woorden en daden.",
+      ],
+      terms: [
+        ["Hadith", "Een overlevering over de Profeet."],
+        ["Sunnah", "Het voorbeeld en de weg van de Profeet."],
+        ["Niyyah", "Intentie: waarom je iets doet."],
+        ["Tawhid", "Allah als de Ene erkennen en aanbidden."],
+      ],
+      checkpoints: [
+        "Kun je sunnah en hadith in eigen woorden uit elkaar houden?",
+        "Kun je bij een voorbeeld herkennen of het over sabr, shukr of niyyah gaat?",
+        "Weet je dat tawhid geen gedragsterm is, maar over aanbidding en geloof gaat?",
+      ],
+      examTips: [
+        "Let op signaalwoorden: 'voorbeeld van de Profeet' wijst meestal naar sunnah, 'overlevering' naar hadith en 'waarom je iets doet' naar niyyah.",
+      ],
+    },
+    expert: {
+      points: [
+        "Ihsan is het hoogste niveau in de bekende hadith van Jibril: aanbidden met diepe bewustheid van Allah.",
+        "Taqwa betekent niet alleen angst, maar waakzaam leven met bewustzijn van Allah.",
+        "Tawakkul is geen passief afwachten; je doet je best en vertrouwt daarna op Allah.",
+        "Aqidah gaat over wat je gelooft. Fiqh gaat over hoe regels worden begrepen en toegepast.",
+        "Ikhlas beschermt goede daden tegen showen of verkeerde bedoelingen.",
+      ],
+      terms: [
+        ["Aqidah", "Geloofsleer: de basis van wat een moslim gelooft."],
+        ["Fiqh", "Begrip van islamitische regels."],
+        ["Rizq", "Voorziening die Allah geeft."],
+        ["Tawbah", "Berouw tonen en terugkeren naar Allah."],
+      ],
+      checkpoints: [
+        "Kun je ihsan, taqwa en tawakkul van elkaar onderscheiden?",
+        "Herken je of een vraag over geloofsleer, regels of karakter gaat?",
+        "Kun je uitleggen waarom tawakkul altijd samen kan gaan met inspanning?",
+      ],
+      examTips: [
+        "Bij expertvragen lijken antwoorden vaak allemaal islamitisch. Zoek de kern van de definitie: geloofsleer, regels, karakter of vertrouwen.",
+      ],
+    },
+  },
+  gebed: {
+    beginner: {
+      points: [
+        "De vijf verplichte gebeden vormen het dagritme: Fajr, Dhuhr, Asr, Maghrib en Isha.",
+        "Fajr is voor zonsopkomst; Dhuhr rond de middag; Asr later op de dag; Maghrib na zonsondergang; Isha in de nacht.",
+        "Wudhu is voorbereiding op het gebed en hoort bij reinheid.",
+        "De plek van gebed hoort schoon te zijn.",
+        "Allahu Akbar opent het gebed; de adhan roept mensen op tot het gebed.",
+      ],
+      terms: [
+        ["Fajr", "Het gebed rond de dageraad."],
+        ["Dhuhr", "Het middaggebed."],
+        ["Maghrib", "Het gebed na zonsondergang."],
+        ["Isha", "Het nachtgebed."],
+      ],
+      checkpoints: [
+        "Kun je de vijf gebeden in volgorde zetten?",
+        "Weet je welke woorden bij starten, oproepen en richten horen?",
+        "Kun je uitleggen waarom wudhu voor het gebed belangrijk is?",
+      ],
+      examTips: [
+        "Tijdwoorden helpen: 'dageraad' is Fajr, 'middag' is Dhuhr, 'zonsondergang' is Maghrib en 'nacht' is Isha.",
+      ],
+    },
+    advanced: {
+      points: [
+        "De basisvolgorde is staan, reciteren, buigen, weer rechtop staan, neerknielen, zitten en opnieuw neerknielen.",
+        "Qiyam is staan; ruku is buigen; sujud is neerknielen.",
+        "Tashahhud hoort bij het zitten aan het einde van het gebed.",
+        "Salam sluit het gebed af.",
+        "Een imam gaat voor; de volgers bidden achter hem mee.",
+      ],
+      terms: [
+        ["Qiyam", "Staan in het gebed."],
+        ["Ruku", "Buiging."],
+        ["Sujud", "Neerknieling."],
+        ["Salam", "De afsluitende groet van het gebed."],
+      ],
+      checkpoints: [
+        "Kun je ruku en sujud direct herkennen aan de houding?",
+        "Weet je wat direct na ruku gebeurt?",
+        "Weet je welke handeling de afsluiting is?",
+      ],
+      examTips: [
+        "Maak in je hoofd een mini-filmpje van de gebedsvolgorde. Houdingsvragen worden dan veel makkelijker.",
+      ],
+    },
+    expert: {
+      points: [
+        "Al-Fatiha wordt in elke rak'ah gelezen; dit is een vaak terugkerend kernpunt.",
+        "Khushu' gaat over aandacht, nederigheid en concentratie in het gebed.",
+        "Sami'a Allahu liman hamidah hoort bij het opkomen uit ruku.",
+        "Sujud as-sahw is verbonden met vergeetachtigheid in het gebed.",
+        "Jama'ah betekent samen bidden; Jumu'ah is het vrijdaggebed rond Dhuhr.",
+        "Rawatib zijn sunnah-gebeden rond verplichte gebeden.",
+      ],
+      terms: [
+        ["Rak'ah", "Een gebedseenheid met staan, buigen en neerknielen."],
+        ["Khushu'", "Rustige concentratie en aanwezigheid in het gebed."],
+        ["Sutrah", "Afscheiding voor iemand die bidt."],
+        ["Rawatib", "Sunnah-gebeden rond verplichte gebeden."],
+      ],
+      checkpoints: [
+        "Kun je Jumu'ah, jama'ah en witr uit elkaar houden?",
+        "Weet je welke uitspraak bij welke houding hoort?",
+        "Herken je wanneer een vraag over verplicht, sunnah of correctie gaat?",
+      ],
+      examTips: [
+        "Expertvragen gebruiken vaak Arabische termen die op elkaar lijken. Koppel elk woord aan een concrete situatie in het gebed.",
+      ],
+    },
+  },
+  quran: {
+    beginner: {
+      points: [
+        "De Qur'an is de belangrijkste bron voor moslims.",
+        "De Qur'an werd in het Arabisch geopenbaard aan de Profeet Muhammad.",
+        "Jibril bracht de openbaring.",
+        "Een surah is een hoofdstuk; een ayah is een vers.",
+        "Al-Fatiha is de eerste surah in de mushaf en wordt in elke rak'ah gelezen.",
+      ],
+      terms: [
+        ["Surah", "Een hoofdstuk van de Qur'an."],
+        ["Ayah", "Een vers van de Qur'an."],
+        ["Reciteren", "De Qur'an mooi en zorgvuldig lezen."],
+        ["Mushaf", "De geschreven Qur'an als boek."],
+      ],
+      checkpoints: [
+        "Weet je het verschil tussen surah en ayah?",
+        "Kun je Al-Fatiha, Al-Ikhlas en Qur'an herkennen aan korte omschrijvingen?",
+        "Weet je wie de openbaring bracht?",
+      ],
+      examTips: [
+        "Bij basisvragen over de Qur'an draait het vaak om indeling: taal, surah, ayah, aantal en eerste surah.",
+      ],
+    },
+    advanced: {
+      points: [
+        "De eerste openbaring begon met Iqra in de grot Hira.",
+        "Al-Baqarah is de langste surah; Al-Kawthar is de kortste surah.",
+        "Al-Ikhlas vat tawhid kort en krachtig samen.",
+        "Tajwid helpt bij correcte recitatie.",
+        "Tafsir is uitleg van de betekenis van de Qur'an.",
+        "Makki en Madani verwijzen meestal naar de periode van openbaring.",
+      ],
+      terms: [
+        ["Iqra", "Lees/reciteer; verbonden met de eerste openbaring."],
+        ["Tajwid", "Regels voor correcte recitatie."],
+        ["Tafsir", "Uitleg van de Qur'an."],
+        ["Makki/Madani", "Aanduiding van periode/context van openbaring."],
+      ],
+      checkpoints: [
+        "Kun je langste, kortste en eerste surah uit elkaar houden?",
+        "Weet je wat tajwid en tafsir betekenen?",
+        "Herken je vragen over openbaringsplaats en openbaringsperiode?",
+      ],
+      examTips: [
+        "Let op of de vraag vraagt naar recitatie of uitleg. Recitatie wijst naar tajwid; uitleg wijst naar tafsir.",
+      ],
+    },
+    expert: {
+      points: [
+        "Ayat al-Kursi staat in Al-Baqarah 2:255.",
+        "De Qur'an wordt vaak verdeeld in 30 juz om het lezen te plannen.",
+        "Qira'ah betekent recitatiestijl.",
+        "Waqf gaat over pauzeren of stoppen tijdens recitatie.",
+        "Sabab an-nuzul gaat over de aanleiding van openbaring.",
+        "Mutawatir betekent breed en sterk overgeleverd.",
+      ],
+      terms: [
+        ["Juz", "Een van de 30 leesdelen van de Qur'an."],
+        ["Qira'ah", "Een recitatiestijl."],
+        ["Waqf", "Pauzeren of stoppen in recitatie."],
+        ["At-Tawbah", "Surah die in de mushaf niet met Bismillah begint."],
+      ],
+      checkpoints: [
+        "Weet je welke begrippen over indeling, recitatie en overlevering gaan?",
+        "Kun je Ayat al-Kursi koppelen aan Al-Baqarah 2:255?",
+        "Kun je At-Tawbah herkennen aan de Bismillah-vraag?",
+      ],
+      examTips: [
+        "Bij expertvragen helpt sorteren: gaat de vraag over plaats in de Qur'an, leesindeling, recitatieregel of overlevering?",
+      ],
+    },
+  },
+  profeten: {
+    beginner: {
+      points: [
+        "Profeten riepen hun volk op tot aanbidding van Allah en goed gedrag.",
+        "Nuh bouwde de ark; Yunus werd opgeslokt door een grote vis.",
+        "Musa sprak met Allah.",
+        "Isa is de zoon van Maryam en werd zonder vader geboren.",
+        "Muhammad is de laatste profeet in de Islam.",
+      ],
+      terms: [
+        ["Nuh", "Verbonden met de ark."],
+        ["Yunus", "Verbonden met de grote vis."],
+        ["Maryam", "Moeder van Isa."],
+        ["Zabur", "Openbaring die Dawud kreeg."],
+      ],
+      checkpoints: [
+        "Kun je elke profeet koppelen aan een herkenbaar verhaal?",
+        "Weet je wie de laatste profeet is?",
+        "Weet je welke profeten met bekende openbaringen verbonden zijn?",
+      ],
+      examTips: [
+        "Maak duo's: profeet plus herkenningswoord, zoals Nuh-ark, Musa-spreken, Yunus-vis en Isa-Maryam.",
+      ],
+    },
+    advanced: {
+      points: [
+        "Musa werd met zijn volk gered toen de zee spleet.",
+        "Yusuf werd beproefd, kwam in Egypte terecht en kon dromen uitleggen.",
+        "Salih werd naar Thamud gestuurd; Hud naar Ad.",
+        "Sulayman was profeet en koning en stond bekend om wijsheid.",
+        "Ibrahim werd beproefd met het offer.",
+        "Harun was de broer van Musa.",
+      ],
+      terms: [
+        ["Thamud", "Volk waar Salih naar werd gestuurd."],
+        ["Ad", "Volk waar Hud naar werd gestuurd."],
+        ["Harun", "Broer van Musa."],
+        ["Sulayman", "Bekend om wijsheid en koningschap."],
+      ],
+      checkpoints: [
+        "Kun je volk en profeet aan elkaar koppelen?",
+        "Kun je Yusuf herkennen aan dromen en Egypte?",
+        "Weet je welke profeet bij wijsheid en koningschap hoort?",
+      ],
+      examTips: [
+        "Bij verhalenvragen is de locatie of beproeving meestal de sleutel: zee, Egypte, offer, volk of koningschap.",
+      ],
+    },
+    expert: {
+      points: [
+        "Dhun-Nun is een bijnaam van Yunus.",
+        "Ibrahim was de vader van Ismail; Ismail is sterk verbonden met de Ka'bah.",
+        "Ayyub staat bekend om sabr tijdens ziekte.",
+        "Zakariya was de vader van Yahya.",
+        "Sulayman begreep de taal van vogels.",
+        "Yusuf werd door zijn broers in een put gegooid.",
+      ],
+      terms: [
+        ["Dhun-Nun", "Bijnaam van Yunus."],
+        ["Ismail", "Zoon van Ibrahim, verbonden met de Ka'bah."],
+        ["Yahya", "Zoon van Zakariya."],
+        ["Ayyub", "Bekend om geduld tijdens ziekte."],
+      ],
+      checkpoints: [
+        "Kun je bijnamen, vaders en zonen uit elkaar houden?",
+        "Herken je welke profeet bij ziekte, put, vuur of vogels hoort?",
+        "Weet je welke details bij Ibrahim, Yusuf en Sulayman horen?",
+      ],
+      examTips: [
+        "Expertvragen testen vaak details. Leer de namen als koppelingen: bijnaam, familieband, beproeving en gave.",
+      ],
+    },
+  },
+  namen: {
+    beginner: {
+      points: [
+        "De Namen van Allah leren je Zijn eigenschappen beter herkennen.",
+        "Ar-Rahman wijst op grote barmhartigheid.",
+        "Al-Alim betekent dat Allah alles weet.",
+        "Al-Malik betekent De Koning: macht en heerschappij behoren aan Allah.",
+        "Ar-Razzaq betekent De Voorziener.",
+      ],
+      terms: [
+        ["Ar-Rahman", "De Meest Barmhartige."],
+        ["Al-Alim", "De Alwetende."],
+        ["Al-Malik", "De Koning."],
+        ["Ar-Razzaq", "De Voorziener."],
+      ],
+      checkpoints: [
+        "Kun je de betekenis van elke naam in een kort Nederlands woord zeggen?",
+        "Herken je of een vraag gaat over weten, horen, zien, liefde of voorziening?",
+        "Kun je Al-Alim, As-Sami en Al-Basir uit elkaar houden?",
+      ],
+      examTips: [
+        "Veel opties lijken positief. Koppel de Arabische naam aan precies een eigenschap: weten, horen, zien, geven of barmhartigheid.",
+      ],
+    },
+    advanced: {
+      points: [
+        "Al-Khaliq betekent De Schepper.",
+        "Al-Ghaffar wijst op Allahs vergeving.",
+        "As-Salam betekent De Bron van vrede.",
+        "Al-Qayyum betekent De Zelfbestaande Onderhouder.",
+        "Al-Hafiz betekent De Beschermer.",
+        "Al-Karim betekent De Edelmoedige.",
+      ],
+      terms: [
+        ["Al-Khaliq", "De Schepper."],
+        ["Al-Ghaffar", "De Vergever."],
+        ["As-Salam", "De Bron van vrede."],
+        ["Al-Mujib", "De Verhoorder."],
+      ],
+      checkpoints: [
+        "Kun je scheppen, vergeven, beschermen en verhoren uit elkaar houden?",
+        "Herken je namen die met zorg en onderhoud te maken hebben?",
+        "Weet je dat As-Salam niet simpelweg 'groet' betekent, maar De Bron van vrede?",
+      ],
+      examTips: [
+        "Vertaal niet alleen op klank. Vraag jezelf af welke eigenschap de omschrijving noemt.",
+      ],
+    },
+    expert: {
+      points: [
+        "Al-Latif wijst op subtiele, zachte zorg van Allah.",
+        "Al-Hakeem betekent De Alwijze.",
+        "Al-Quddus betekent De Heilige.",
+        "Al-Awwal en Al-Akhir vormen een betekenis-paar: De Eerste en De Laatste.",
+        "Az-Zahir en Al-Batin vormen ook een paar: De Openlijke en De Verborgene.",
+        "Al-Jami betekent De Verzamelaar.",
+      ],
+      terms: [
+        ["Al-Latif", "De Zachtmoedige Subtiele."],
+        ["Al-Hakeem", "De Alwijze."],
+        ["Al-Quddus", "De Heilige."],
+        ["Al-Warith", "De Erfgenaam."],
+      ],
+      checkpoints: [
+        "Kun je betekenis-paren herkennen zoals Eerste/Laatste en Openlijke/Verborgene?",
+        "Weet je welke Namen wijsheid, heiligheid, kracht en verzamelen aanduiden?",
+        "Kun je subtiel verschil zien tussen Al-Latif, Al-Hakeem en Al-Quddus?",
+      ],
+      examTips: [
+        "Bij expertvragen over Namen werken paren goed als geheugensteun. Leer namen die logisch tegenover of naast elkaar staan samen.",
+      ],
+    },
+  },
+};
 
 const quizQuestionBank = [
   {
@@ -723,11 +1341,16 @@ const dom = {
   quizCard: document.querySelector("#quizCard"),
   quizTopic: document.querySelector("#quizTopic"),
   quizStep: document.querySelector("#quizStep"),
+  quizTheoryPanel: document.querySelector("#quizTheoryPanel"),
   questionText: document.querySelector("#questionText"),
   answerList: document.querySelector("#answerList"),
   quizFeedback: document.querySelector("#quizFeedback"),
   nextQuestionButton: document.querySelector("#nextQuestionButton"),
+  stopQuizButton: document.querySelector("#stopQuizButton"),
   restartQuizButton: document.querySelector("#restartQuizButton"),
+  quizStopConfirm: document.querySelector("#quizStopConfirm"),
+  cancelStopQuizButton: document.querySelector("#cancelStopQuizButton"),
+  confirmStopQuizButton: document.querySelector("#confirmStopQuizButton"),
   quizResultCard: document.querySelector("#quizResultCard"),
   quizResultTitle: document.querySelector("#quizResultTitle"),
   quizResultText: document.querySelector("#quizResultText"),
@@ -767,6 +1390,7 @@ function createInitialState() {
     })),
     quizResults: [],
     quizProgress: {},
+    recentQuizQuestionIds: [],
     challengeClaims: {},
     dailyChallengeClaims: {},
     badges: {},
@@ -784,6 +1408,9 @@ function loadState() {
       goals: Array.isArray(parsed.goals) ? parsed.goals : createInitialState().goals,
       quizResults: Array.isArray(parsed.quizResults) ? parsed.quizResults : [],
       quizProgress: parsed.quizProgress && typeof parsed.quizProgress === "object" ? parsed.quizProgress : {},
+      recentQuizQuestionIds: Array.isArray(parsed.recentQuizQuestionIds)
+        ? parsed.recentQuizQuestionIds.filter((item) => typeof item === "string").slice(-RECENT_QUIZ_QUESTION_LIMIT)
+        : [],
       challengeClaims: normalizeRecord(parsed.challengeClaims),
       dailyChallengeClaims:
         parsed.dailyChallengeClaims && typeof parsed.dailyChallengeClaims === "object"
@@ -1252,9 +1879,192 @@ function getQuestionPool(subjectId, difficultyId) {
   });
 }
 
+function getQuestionId(question) {
+  return `${question.subject}:${question.difficulty}:${question.question}`;
+}
+
+function prepareQuizQuestion(question) {
+  const shuffledAnswers = shuffleItems(
+    question.answers.map((answer, index) => ({
+      answer,
+      isCorrect: index === question.correct,
+    }))
+  );
+
+  return {
+    ...question,
+    id: getQuestionId(question),
+    answers: shuffledAnswers.map((item) => item.answer),
+    correct: shuffledAnswers.findIndex((item) => item.isCorrect),
+  };
+}
+
 function getQuizQuestions(subjectId, difficultyId) {
   const pool = getQuestionPool(subjectId, difficultyId);
-  return shuffleItems(pool).slice(0, QUIZ_QUESTION_COUNT);
+  const recentQuestionIds = new Set(state.recentQuizQuestionIds || []);
+  const freshQuestions = shuffleItems(pool.filter((question) => !recentQuestionIds.has(getQuestionId(question))));
+  const repeatQuestions = shuffleItems(pool.filter((question) => recentQuestionIds.has(getQuestionId(question))));
+
+  return [...freshQuestions, ...repeatQuestions].slice(0, QUIZ_QUESTION_COUNT).map(prepareQuizQuestion);
+}
+
+function mergeQuizTheory(baseTheory, addOn = {}) {
+  return {
+    ...baseTheory,
+    points: [...(baseTheory.points || []), ...(addOn.points || [])],
+    terms: [...(baseTheory.terms || []), ...(addOn.terms || [])],
+    checkpoints: [...(baseTheory.checkpoints || []), ...(addOn.checkpoints || [])],
+    examTips: [...(baseTheory.examTips || []), ...(addOn.examTips || [])],
+  };
+}
+
+function getQuizTheory(subjectId, difficultyId) {
+  const difficulty = getDifficultyById(difficultyId);
+  const subject = getSubjectById(subjectId);
+
+  if (subject.id === "mixed") {
+    return getMixedQuizTheory(difficulty.id);
+  }
+
+  const baseTheory =
+    quizTheoryBank[subject.id]?.[difficulty.id] || {
+      title: `${subject.label} - ${difficulty.label}`,
+      intro: subject.description,
+      points: [difficulty.description],
+      terms: [],
+    };
+  const addOn = quizTheoryStudyAddOns[subject.id]?.[difficulty.id];
+
+  return mergeQuizTheory(baseTheory, addOn);
+}
+
+function getMixedQuizTheory(difficultyId) {
+  const difficulty = getDifficultyById(difficultyId);
+  const subjectTheories = quizSubjects
+    .filter((subject) => subject.id !== "mixed")
+    .map((subject) => ({
+      subject,
+      theory: getQuizTheory(subject.id, difficulty.id),
+    }));
+
+  return {
+    title: `Gemengd: ${difficulty.label}`,
+    intro:
+      "Deze quiz mixt onderwerpen. Lees per onderdeel het belangrijkste herkenningspunt, zodat je sneller ziet waar de vraag over gaat.",
+    points: subjectTheories.flatMap(({ subject, theory }) =>
+      theory.points.slice(0, 2).map((point) => `${subject.label}: ${point}`)
+    ),
+    terms: subjectTheories.map(({ subject, theory }) => {
+      const [term, meaning] = theory.terms[0] || [subject.label, theory.intro];
+      return [`${subject.label}: ${term}`, meaning];
+    }),
+    checkpoints: subjectTheories.map(
+      ({ subject, theory }) => `${subject.label}: ${theory.checkpoints?.[0] || "Ken je de belangrijkste kernpunten?"}`
+    ),
+    examTips: [
+      "Bij een gemengde quiz is het onderwerp herkennen stap 1. Bepaal eerst of de vraag gaat over basiskennis, gebed, Qur'an, profeten of Namen van Allah.",
+    ],
+  };
+}
+
+function renderTheoryStudySections(theory, options = {}) {
+  const pointLimit = options.pointLimit || theory.points.length;
+  const points = theory.points.slice(0, pointLimit);
+
+  return `
+    <ul class="quiz-theory-points">
+      ${points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
+    </ul>
+    ${
+      theory.terms?.length
+        ? `
+          <dl class="quiz-theory-terms">
+            ${theory.terms
+              .map(
+                ([term, meaning]) => `
+                  <div>
+                    <dt>${escapeHtml(term)}</dt>
+                    <dd>${escapeHtml(meaning)}</dd>
+                  </div>
+                `
+              )
+              .join("")}
+          </dl>
+        `
+        : ""
+    }
+    ${
+      theory.checkpoints?.length
+        ? `
+          <div class="quiz-theory-study-block">
+            <strong>Check jezelf</strong>
+            <ul>
+              ${theory.checkpoints.map((checkpoint) => `<li>${escapeHtml(checkpoint)}</li>`).join("")}
+            </ul>
+          </div>
+        `
+        : ""
+    }
+    ${
+      theory.examTips?.length
+        ? `
+          <div class="quiz-theory-study-block quiz-theory-tip-block">
+            <strong>Tentamen-tip</strong>
+            <ul>
+              ${theory.examTips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join("")}
+            </ul>
+          </div>
+        `
+        : ""
+    }
+  `;
+}
+
+function renderQuizTheoryPreview(subjectId) {
+  return `
+    <section class="quiz-theory-preview" aria-label="Theorie per niveau">
+      <div class="quiz-theory-preview-head">
+        <div>
+          <p class="eyebrow">Eerst inlezen</p>
+          <h3>Theorie per quiz</h3>
+        </div>
+      </div>
+      <div class="quiz-theory-accordion">
+        ${quizDifficulties
+          .map((difficulty) => {
+            const theory = getQuizTheory(subjectId, difficulty.id);
+
+            return `
+              <details class="quiz-theory-details" ${difficulty.id === "beginner" ? "open" : ""}>
+                <summary>
+                  <span>${escapeHtml(difficulty.label)}</span>
+                  <small>${escapeHtml(theory.title)}</small>
+                </summary>
+                <p>${escapeHtml(theory.intro)}</p>
+                ${renderTheoryStudySections(theory)}
+              </details>
+            `;
+          })
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderQuizTheoryPanel(subjectId, difficultyId) {
+  const theory = getQuizTheory(subjectId, difficultyId);
+
+  dom.quizTheoryPanel.innerHTML = `
+    <div class="quiz-theory-title-row">
+      <div>
+        <p class="eyebrow">Theorie</p>
+        <h3>${escapeHtml(theory.title)}</h3>
+      </div>
+      <span>Lees eerst</span>
+    </div>
+    <p class="quiz-theory-intro">${escapeHtml(theory.intro)}</p>
+    ${renderTheoryStudySections(theory)}
+  `;
 }
 
 function getQuestionExplanation(question) {
@@ -1272,6 +2082,28 @@ function getQuestionExplanation(question) {
   return `Het juiste antwoord is "${correctAnswer}". ${
     subjectHints[question.subject] || "Onthoud dit kernpunt voor de volgende ronde."
   }`;
+}
+
+function getAnswerFeedback(question, isCorrect) {
+  const explanation = getQuestionExplanation(question);
+  if (isCorrect) return `Goed antwoord. ${explanation}`;
+
+  return explanation.startsWith("Het juiste antwoord")
+    ? `Nog niet. ${explanation}`
+    : `Nog niet. Het juiste antwoord is: ${question.answers[question.correct]}. ${explanation}`;
+}
+
+function rememberQuizQuestions(questions) {
+  const recentIds = Array.isArray(state.recentQuizQuestionIds) ? [...state.recentQuizQuestionIds] : [];
+
+  questions.forEach((question) => {
+    const questionId = question.id || getQuestionId(question);
+    const existingIndex = recentIds.indexOf(questionId);
+    if (existingIndex !== -1) recentIds.splice(existingIndex, 1);
+    recentIds.push(questionId);
+  });
+
+  state.recentQuizQuestionIds = recentIds.slice(-RECENT_QUIZ_QUESTION_LIMIT);
 }
 
 function shuffleItems(items) {
@@ -1362,6 +2194,8 @@ function renderQuizSetup() {
         <span class="route-progress">${passedCount}/3</span>
       </div>
 
+      ${renderQuizTheoryPreview(selectedSubject.id)}
+
       <div class="difficulty-tile-grid">${difficultyButtons}</div>
     </section>
   `;
@@ -1390,6 +2224,15 @@ function renderQuiz() {
 
   dom.quizTopic.textContent = `${subject.label} - ${difficulty.label}`;
   dom.quizStep.textContent = `${quizSession.currentIndex + 1}/${quizSession.questions.length}`;
+  if (difficulty.id === "beginner") {
+    dom.quizTheoryPanel.classList.remove("hidden");
+    dom.quizTheoryPanel.setAttribute("aria-hidden", "false");
+    renderQuizTheoryPanel(subject.id, difficulty.id);
+  } else {
+    dom.quizTheoryPanel.classList.add("hidden");
+    dom.quizTheoryPanel.setAttribute("aria-hidden", "true");
+    dom.quizTheoryPanel.innerHTML = "";
+  }
   dom.questionText.textContent = currentQuestion.question;
   dom.quizFeedback.textContent = "";
   dom.quizFeedback.className = "feedback";
@@ -1559,15 +2402,14 @@ function selectAnswer(answerIndex) {
     button.classList.toggle("wrong", buttonIndex === answerIndex && !isCorrect);
   });
 
-  dom.quizFeedback.textContent = isCorrect
-    ? "Goed antwoord."
-    : `Nog niet. Het juiste antwoord is: ${currentQuestion.answers[currentQuestion.correct]}.`;
+  dom.quizFeedback.textContent = getAnswerFeedback(currentQuestion, isCorrect);
   dom.quizFeedback.className = `feedback ${isCorrect ? "good" : "bad"}`;
   dom.nextQuestionButton.disabled = false;
 }
 
 function goToNextQuestion() {
   if (quizSession.selectedAnswer === null) return;
+  hideQuizStopConfirm();
 
   if (quizSession.currentIndex < quizSession.questions.length - 1) {
     quizSession.currentIndex += 1;
@@ -1603,15 +2445,16 @@ function finishQuiz() {
 
   const progressKey = getQuizProgressKey(subject.id, difficulty.id);
   state.quizProgress[progressKey] = Math.max(Number(state.quizProgress[progressKey]) || 0, score);
+  rememberQuizQuestions(quizSession.questions);
 
   if (state.quizResults.length > 20) {
     state.quizResults = state.quizResults.slice(-20);
   }
 
-  saveState();
   if (xpEarned > 0) {
     awardXp(xpEarned, "Quiz afgerond");
   } else {
+    saveState();
     render();
   }
   renderQuiz();
@@ -1654,16 +2497,41 @@ function resetQuiz() {
     return;
   }
 
+  hideQuizStopConfirm();
   startQuiz();
 }
 
 function showQuizSetup() {
+  hideQuizStopConfirm();
   quizSession = {
     ...createQuizSession(),
     subjectId: quizSession.subjectId,
     difficultyId: quizSession.difficultyId,
   };
   renderQuiz();
+}
+
+function showQuizStopConfirm() {
+  dom.quizStopConfirm.classList.remove("hidden");
+  dom.confirmStopQuizButton.focus();
+}
+
+function hideQuizStopConfirm() {
+  dom.quizStopConfirm.classList.add("hidden");
+}
+
+function stopQuiz() {
+  const subjectId = quizSession.subjectId;
+  const difficultyId = quizSession.difficultyId;
+
+  quizSession = {
+    ...createQuizSession(),
+    subjectId,
+    difficultyId,
+  };
+  hideQuizStopConfirm();
+  renderQuiz();
+  showToast("Quiz gestopt.");
 }
 
 function updateDailyChallengeTimer() {
@@ -1842,6 +2710,9 @@ dom.answerList.addEventListener("click", (event) => {
 });
 
 dom.nextQuestionButton.addEventListener("click", goToNextQuestion);
+dom.stopQuizButton.addEventListener("click", showQuizStopConfirm);
+dom.cancelStopQuizButton.addEventListener("click", hideQuizStopConfirm);
+dom.confirmStopQuizButton.addEventListener("click", stopQuiz);
 dom.restartQuizButton.addEventListener("click", resetQuiz);
 dom.newQuizButton.addEventListener("click", resetQuiz);
 dom.changeQuizButton.addEventListener("click", showQuizSetup);
@@ -1866,6 +2737,11 @@ document.addEventListener("keydown", (event) => {
 
   if (!dom.challengeCelebrationOverlay.classList.contains("hidden")) {
     closeChallengeCelebration();
+    return;
+  }
+
+  if (!dom.quizStopConfirm.classList.contains("hidden")) {
+    hideQuizStopConfirm();
     return;
   }
 

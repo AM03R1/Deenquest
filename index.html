@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=38" />
+    <link rel="stylesheet" href="styles.css?v=44" />
   </head>
   <body>
     <div class="app-shell">
@@ -145,12 +145,28 @@
               <span id="quizTopic">Basiskennis Islam</span>
               <span id="quizStep">1/10</span>
             </div>
+            <section class="quiz-theory-panel" id="quizTheoryPanel" aria-label="Theorie voor deze quiz"></section>
             <h3 id="questionText">Vraag wordt geladen...</h3>
             <div class="answer-list" id="answerList"></div>
             <p class="feedback" id="quizFeedback" aria-live="polite"></p>
             <div class="quiz-actions">
+              <button class="secondary-button quiz-stop-button" id="stopQuizButton" type="button">Stoppen</button>
               <button class="secondary-button" id="restartQuizButton" type="button">Opnieuw</button>
               <button class="primary-button" id="nextQuestionButton" type="button" disabled>Volgende</button>
+            </div>
+            <div
+              class="quiz-stop-confirm hidden"
+              id="quizStopConfirm"
+              role="alertdialog"
+              aria-labelledby="quizStopConfirmTitle"
+              aria-describedby="quizStopConfirmText"
+            >
+              <strong id="quizStopConfirmTitle">Stoppen met deze quiz?</strong>
+              <p id="quizStopConfirmText">Weet je zeker dat je wilt stoppen? Deze ronde wordt niet opgeslagen.</p>
+              <div class="quiz-stop-confirm-actions">
+                <button class="secondary-button" id="cancelStopQuizButton" type="button">Verdergaan</button>
+                <button class="danger-button" id="confirmStopQuizButton" type="button">Stoppen</button>
+              </div>
             </div>
           </article>
 
@@ -537,6 +553,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=38" defer></script>
+    <script src="app.js?v=44" defer></script>
   </body>
 </html>
