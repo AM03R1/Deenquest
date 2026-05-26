@@ -5,6 +5,9 @@ const QUIZ_COMPLETION_XP = 15;
 const XP_PER_LEVEL = 100;
 const QUIZ_QUESTION_COUNT = 10;
 const QUIZ_PASS_SCORE = 6;
+const MAX_HEARTS = 3;
+const MIN_HEARTS = 0;
+const HEART_REWARD_AMOUNT = 1;
 const RECENT_QUIZ_QUESTION_LIMIT = 60;
 
 const badgeCatalog = [
@@ -1334,6 +1337,8 @@ const dom = {
   goalForm: document.querySelector("#goalForm"),
   goalInput: document.querySelector("#goalInput"),
   goalList: document.querySelector("#goalList"),
+  quizHeartChip: document.querySelector("#quizHeartChip"),
+  quizHeartCount: document.querySelector("#quizHeartCount"),
   quizXpChip: document.querySelector("#quizXpChip"),
   quizSetupCard: document.querySelector("#quizSetupCard"),
   quizRouteList: document.querySelector("#quizRouteList"),
@@ -1380,6 +1385,7 @@ applyTheme();
 function createInitialState() {
   return {
     xp: 0,
+    hearts: MAX_HEARTS,
     goals: defaultGoals.map((title, index) => ({
       id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${index}`,
       title,
@@ -1405,6 +1411,7 @@ function loadState() {
     const parsed = JSON.parse(stored);
     return {
       xp: Number.isFinite(parsed.xp) ? parsed.xp : 0,
+      hearts: normalizeHearts(parsed.hearts),
       goals: Array.isArray(parsed.goals) ? parsed.goals : createInitialState().goals,
       quizResults: Array.isArray(parsed.quizResults) ? parsed.quizResults : [],
       quizProgress: parsed.quizProgress && typeof parsed.quizProgress === "object" ? parsed.quizProgress : {},
@@ -1439,6 +1446,43 @@ function normalizeRecord(value) {
   }
 
   return value && typeof value === "object" ? value : {};
+}
+
+function normalizeHearts(value) {
+  const hearts = Number(value);
+  if (!Number.isFinite(hearts)) return MAX_HEARTS;
+
+  return Math.min(MAX_HEARTS, Math.max(MIN_HEARTS, Math.trunc(hearts)));
+}
+
+function getHeartDisplay(value = state.hearts) {
+  const hearts = normalizeHearts(value);
+  return `${"❤️".repeat(hearts)}${"♡".repeat(MAX_HEARTS - hearts)}`;
+}
+
+function renderHearts() {
+  const hearts = normalizeHearts(state.hearts);
+  state.hearts = hearts;
+  dom.quizHeartCount.textContent = getHeartDisplay(hearts);
+  dom.quizHeartChip.setAttribute("aria-label", `${hearts} van ${MAX_HEARTS} hartjes`);
+}
+
+function hasMissingHearts() {
+  return normalizeHearts(state.hearts) < MAX_HEARTS;
+}
+
+function addHeart() {
+  const currentHearts = normalizeHearts(state.hearts);
+  state.hearts = Math.min(MAX_HEARTS, currentHearts + HEART_REWARD_AMOUNT);
+  saveState();
+  renderHearts();
+  renderQuizSetup();
+  renderChallenges();
+  return state.hearts > currentHearts;
+}
+
+function loseHeart() {
+  state.hearts = Math.max(MIN_HEARTS, normalizeHearts(state.hearts) - 1);
 }
 
 function getLocalDayKey(date = new Date()) {
@@ -1524,6 +1568,7 @@ function setView(viewName) {
 
 function render() {
   renderDashboard();
+  renderHearts();
   renderDailyAyah();
   renderHomeGoals();
   renderGoals();
@@ -1719,10 +1764,14 @@ function renderChallenges() {
 
 function renderChallengeItem(challenge) {
   const statusLabel = challenge.isClaimed ? "Vandaag voltooid" : challenge.isReady ? "Klaar om te claimen" : "Nog bezig";
+  const rewardType = getChallengeRewardType();
+  const rewardLabel = challenge.isClaimed ? "Beloning geclaimd" : getChallengeRewardLabel(challenge, rewardType);
   const buttonLabel = challenge.isClaimed
     ? "Bekijk beloning"
     : challenge.isReady
-      ? `Claim +${challenge.xp} XP`
+      ? rewardType === "heart"
+        ? "Claim hartje"
+        : `Claim +${challenge.xp} XP`
       : "Nog bezig";
   const buttonAttributes = challenge.isClaimed
     ? `data-show-challenge-celebration="${challenge.id}"`
@@ -1741,7 +1790,7 @@ function renderChallengeItem(challenge) {
           </div>
           <div class="challenge-meta">
             <span class="challenge-status">${statusLabel}</span>
-            <span class="challenge-xp">+${challenge.xp} XP</span>
+            <span class="challenge-xp">${escapeHtml(rewardLabel)}</span>
           </div>
         </div>
         <div class="challenge-progress-row">
@@ -1754,6 +1803,14 @@ function renderChallengeItem(challenge) {
       <button class="challenge-claim-button" type="button" ${buttonAttributes}>${buttonLabel}</button>
     </article>
   `;
+}
+
+function getChallengeRewardType() {
+  return hasMissingHearts() ? "heart" : "xp";
+}
+
+function getChallengeRewardLabel(challenge, rewardType = getChallengeRewardType()) {
+  return rewardType === "heart" ? `+${HEART_REWARD_AMOUNT} hartje` : `+${challenge.xp} XP`;
 }
 
 function renderBadges() {
@@ -1790,17 +1847,23 @@ function claimChallenge(challengeId) {
   }
   if (!state.badges || typeof state.badges !== "object") state.badges = {};
   const isNewBadge = !state.badges[challenge.badgeId];
+  const rewardType = getChallengeRewardType();
   state.dailyChallengeClaims[dayKey][challenge.id] = claimedAt;
   if (!state.badges[challenge.badgeId]) state.badges[challenge.badgeId] = claimedAt;
-  awardXp(challenge.xp);
-  showChallengeCelebration(challenge, isNewBadge);
+  const heartAdded = rewardType === "heart" ? addHeart() : false;
+
+  if (rewardType === "xp") {
+    awardXp(challenge.xp);
+  }
+
+  showChallengeCelebration(challenge, isNewBadge, rewardType, heartAdded);
 }
 
 function handleChallengeClick(event) {
   const showButton = event.target.closest("[data-show-challenge-celebration]");
   if (showButton) {
     const challenge = getChallengeModels().find((item) => item.id === showButton.dataset.showChallengeCelebration);
-    if (challenge) showChallengeCelebration(challenge, false);
+    if (challenge) showChallengeCelebration(challenge, false, "claimed");
     return;
   }
 
@@ -2115,6 +2178,7 @@ function shuffleItems(items) {
 
 function renderQuizSetup() {
   const selectedSubjectId = quizSession.subjectId;
+  const hasHearts = normalizeHearts(state.hearts) > 0;
   dom.quizRouteList.classList.toggle("detail-route-list", Boolean(selectedSubjectId));
   dom.quizRouteList.setAttribute(
     "aria-label",
@@ -2146,7 +2210,9 @@ function renderQuizSetup() {
       .join("");
 
     dom.quizXpChip.textContent = `+${QUIZ_COMPLETION_XP} XP per quiz`;
-    dom.quizLockNote.textContent = "Kies eerst een onderwerp. Daarna open je de drie moeilijkheidsgraden.";
+    dom.quizLockNote.textContent = hasHearts
+      ? "Kies eerst een onderwerp. Daarna open je de drie moeilijkheidsgraden."
+      : "Je hebt 0 hartjes. Je kunt nu geen quiz starten.";
     return;
   }
 
@@ -2157,14 +2223,16 @@ function renderQuizSetup() {
       const isUnlocked = isDifficultyUnlocked(selectedSubject.id, difficulty.id);
       const isPassed = hasPassedQuiz(selectedSubject.id, difficulty.id);
       const bestScore = getBestQuizScore(selectedSubject.id, difficulty.id);
-      const status = isPassed
+      const status = !hasHearts && isUnlocked
+        ? "Geen hartjes"
+        : isPassed
         ? `${bestScore}/10 gehaald`
         : getDifficultyRequirementText(selectedSubject.id, difficulty);
-      const disabled = isUnlocked ? "" : "disabled";
+      const disabled = isUnlocked && hasHearts ? "" : "disabled";
 
       return `
         <button
-          class="difficulty-tile ${isPassed ? "passed" : ""} ${isUnlocked ? "" : "locked"}"
+          class="difficulty-tile ${isPassed ? "passed" : ""} ${isUnlocked ? "" : "locked"} ${!hasHearts && isUnlocked ? "no-hearts" : ""}"
           type="button"
           data-start-subject="${selectedSubject.id}"
           data-start-difficulty="${difficulty.id}"
@@ -2201,8 +2269,9 @@ function renderQuizSetup() {
   `;
 
   dom.quizXpChip.textContent = `+${QUIZ_COMPLETION_XP} XP per quiz`;
-  dom.quizLockNote.textContent =
-    "Elke quiz heeft 10 vragen. Haal minimaal 6 goed om het volgende niveau binnen dat onderwerp vrij te spelen.";
+  dom.quizLockNote.textContent = hasHearts
+    ? "Elke quiz heeft 10 vragen. Haal minimaal 6 goed om het volgende niveau binnen dat onderwerp vrij te spelen."
+    : "Je hebt 0 hartjes. Je kunt nu geen quiz starten.";
 }
 
 function renderQuiz() {
@@ -2275,7 +2344,9 @@ function renderQuizResult() {
 
   dom.quizResultTitle.textContent =
     percentage >= 80 ? "Sterke ronde" : percentage >= 50 ? "Goed geoefend" : "Blijf rustig oefenen";
-  dom.quizResultText.textContent = `${subject.label} - ${difficulty.label}: ${score} van de ${quizSession.questions.length} goed en ${xpEarned} XP verdiend.`;
+  dom.quizResultText.textContent = `${subject.label} - ${difficulty.label}: ${score} van de ${quizSession.questions.length} goed en ${xpEarned} XP verdiend.${
+    score >= QUIZ_PASS_SCORE ? "" : " Je verloor 1 hartje."
+  }`;
   dom.quizMistakeReview.innerHTML = mistakes.length
     ? `
       <div class="quiz-review-heading">
@@ -2430,6 +2501,7 @@ function finishQuiz() {
   const xpEarned = QUIZ_COMPLETION_XP;
   quizSession.finished = true;
   quizSession.xpGranted = true;
+  if (score < QUIZ_PASS_SCORE) loseHeart();
 
   state.quizResults.push({
     id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-quiz`,
@@ -2463,6 +2535,12 @@ function finishQuiz() {
 function startQuiz(subjectId = quizSession.subjectId, difficultyId = quizSession.difficultyId) {
   const subject = getSubjectById(subjectId);
   const difficulty = getDifficultyById(difficultyId);
+
+  if (normalizeHearts(state.hearts) <= MIN_HEARTS) {
+    renderQuizSetup();
+    showToast("Je hebt geen hartjes meer.");
+    return;
+  }
 
   if (!isDifficultyUnlocked(subject.id, difficulty.id)) {
     showToast(getDifficultyRequirementText(subject.id, difficulty));
@@ -2551,11 +2629,20 @@ function startDailyChallengeTimer() {
   dailyChallengeTimer = window.setInterval(updateDailyChallengeTimer, 1000);
 }
 
-function showChallengeCelebration(challenge, isNewBadge) {
+function showChallengeCelebration(challenge, isNewBadge, rewardType = getChallengeRewardType(), heartAdded = false) {
+  const rewardText =
+    rewardType === "heart"
+      ? heartAdded
+        ? `+${HEART_REWARD_AMOUNT} hartje verdiend`
+        : "Hartjes waren al vol"
+      : rewardType === "xp"
+        ? `+${challenge.xp} XP verdiend`
+        : "Beloning vandaag geclaimd";
+
   dom.challengeCelebrationMark.textContent = challenge.badge.mark;
   dom.challengeCelebrationTitle.textContent = "Allahoema baarik!";
   dom.challengeCelebrationMessage.textContent = `Je hebt vandaag "${challenge.title}" behaald. Ga zo door.`;
-  dom.challengeCelebrationReward.textContent = `+${challenge.xp} XP verdiend`;
+  dom.challengeCelebrationReward.textContent = rewardText;
   dom.challengeCelebrationBadge.textContent = isNewBadge
     ? `Nieuwe badge: ${challenge.badge.title}`
     : `Badge: ${challenge.badge.title}`;

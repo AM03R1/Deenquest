@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=44" />
+    <link rel="stylesheet" href="styles.css?v=49" />
   </head>
   <body>
     <div class="app-shell">
@@ -126,7 +126,12 @@
               <p class="eyebrow">Kennis oefenen</p>
               <h2 id="quizTitle">Quiz</h2>
             </div>
-            <span class="xp-chip" id="quizXpChip">+15 XP per quiz</span>
+            <div class="quiz-heading-meta">
+              <span class="heart-chip" id="quizHeartChip" aria-label="3 van 3 hartjes" aria-live="polite">
+                <span id="quizHeartCount">❤️❤️❤️</span>
+              </span>
+              <span class="xp-chip" id="quizXpChip">+15 XP per quiz</span>
+            </div>
           </div>
 
           <article class="quiz-setup-card" id="quizSetupCard">
@@ -553,6 +558,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=44" defer></script>
+    <script src="app.js?v=51" defer></script>
   </body>
 </html>
