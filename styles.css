@@ -267,6 +267,7 @@ h3 {
 }
 
 .hero-copy,
+.home-hero-status,
 .level-badge {
   position: relative;
   z-index: 1;
@@ -292,6 +293,24 @@ h3 {
   border: 1px solid rgba(246, 216, 127, 0.54);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
+}
+
+.home-hero-status {
+  align-self: start;
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+
+.home-heart-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffd2d2;
+  line-height: 1;
+  box-shadow: none;
 }
 
 .level-badge span {
@@ -2159,6 +2178,10 @@ input:focus {
 
   .hero-card {
     grid-template-columns: 1fr;
+  }
+
+  .home-hero-status {
+    justify-items: start;
   }
 
   .level-badge {

@@ -1326,6 +1326,8 @@ const dom = {
   challengeCelebrationMessage: document.querySelector("#challengeCelebrationMessage"),
   challengeCelebrationReward: document.querySelector("#challengeCelebrationReward"),
   challengeCelebrationBadge: document.querySelector("#challengeCelebrationBadge"),
+  homeHeartChip: document.querySelector("#homeHeartChip"),
+  homeHeartCount: document.querySelector("#homeHeartCount"),
   homeLevel: document.querySelector("#homeLevel"),
   nextLevelLabel: document.querySelector("#nextLevelLabel"),
   progressCount: document.querySelector("#progressCount"),
@@ -1463,8 +1465,15 @@ function getHeartDisplay(value = state.hearts) {
 function renderHearts() {
   const hearts = normalizeHearts(state.hearts);
   state.hearts = hearts;
-  dom.quizHeartCount.textContent = getHeartDisplay(hearts);
-  dom.quizHeartChip.setAttribute("aria-label", `${hearts} van ${MAX_HEARTS} hartjes`);
+  const label = `${hearts} van ${MAX_HEARTS} hartjes`;
+
+  [dom.homeHeartCount, dom.quizHeartCount].forEach((heartCount) => {
+    heartCount.textContent = getHeartDisplay(hearts);
+  });
+
+  [dom.homeHeartChip, dom.quizHeartChip].forEach((heartChip) => {
+    heartChip.setAttribute("aria-label", label);
+  });
 }
 
 function hasMissingHearts() {
