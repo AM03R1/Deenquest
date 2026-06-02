@@ -1,10 +1,10 @@
-const CACHE_NAME = "deenquest-v70";
+const CACHE_NAME = "deenquest-v71";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./privacy.html",
   "./support.html",
-  "./styles.css?v=70",
+  "./styles.css?v=71",
   "./app.js?v=66",
   "./manifest.webmanifest",
   "./assets/icon.svg",
