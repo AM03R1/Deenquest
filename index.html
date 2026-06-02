@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=49" />
+    <link rel="stylesheet" href="styles.css?v=70" />
   </head>
   <body>
     <div class="app-shell">
@@ -42,6 +42,16 @@
 
       <main>
         <section class="view active" id="homeView" aria-labelledby="homeTitle">
+          <div class="home-top-status" aria-label="Dagstatus">
+            <span class="heart-chip home-heart-chip" id="homeHeartChip" aria-label="3 van 3 hartjes" aria-live="polite">
+              <span id="homeHeartCount">❤️❤️❤️</span>
+            </span>
+            <span class="streak-badge" id="homeDailyStreakChip" aria-live="polite" aria-label="Dagreeks 0 dagen">
+              <span id="homeDailyStreakCount">0</span>
+              <span aria-hidden="true">🔥</span>
+            </span>
+          </div>
+
           <article class="hero-card">
             <div class="hero-copy">
               <p class="eyebrow">Vandaag</p>
@@ -49,9 +59,6 @@
               <p class="hero-text">Kleine acties bouwen grote gewoontes. Pak een doel of test je kennis.</p>
             </div>
             <div class="home-hero-status">
-              <span class="heart-chip home-heart-chip" id="homeHeartChip" aria-label="3 van 3 hartjes" aria-live="polite">
-                <span id="homeHeartCount">❤️❤️❤️</span>
-              </span>
               <div class="level-badge" aria-live="polite">
                 <span>Level</span>
                 <strong id="homeLevel">1</strong>
@@ -94,6 +101,15 @@
             </div>
             <div class="home-goal-list" id="homeGoalList" aria-live="polite"></div>
           </article>
+
+          <aside class="home-growth-note" aria-labelledby="homeGrowthTitle">
+            <div>
+              <p class="eyebrow">Jouw stem</p>
+              <h3 id="homeGrowthTitle">Bouw mee aan DeenQuest</h3>
+              <p>Feedback helpt de app groeien.</p>
+            </div>
+            <a class="mini-link-button home-growth-link" href="support.html">Feedback</a>
+          </aside>
 
         </section>
 
@@ -198,18 +214,78 @@
               <p class="eyebrow">Voor beginners</p>
               <h2 id="learnTitle">Leren</h2>
             </div>
-            <span class="xp-chip">Basis</span>
+            <span class="xp-chip">Kies onderwerp</span>
           </div>
 
-          <article class="intro-card">
-            <h3>Rustig beginnen is ook vooruitgang.</h3>
-            <p>
-              Deze gids helpt je met de basis van wudhu en het gebed. Details kunnen per leraar of madhhab
-              verschillen, maar dit geeft je een duidelijke start.
-            </p>
-          </article>
+          <div id="learnOverview">
+            <article class="intro-card learn-hero-card">
+              <div>
+                <h3>Waar wil je vandaag mee beginnen?</h3>
+                <p>Kies een onderwerp. Je krijgt daarna een rustige pagina met alleen die uitleg.</p>
+              </div>
+            </article>
 
-          <section class="guide-stack" aria-label="Basisgidsen">
+            <nav class="learn-topic-nav" aria-label="Kies een leeronderwerp">
+              <button class="learn-topic-button" type="button" data-open-learn-page="wudhu">
+                <span class="topic-mark" aria-hidden="true">W</span>
+                <span>
+                  <strong>Wudhu</strong>
+                  <small>Wassing</small>
+                </span>
+              </button>
+              <button class="learn-topic-button" type="button" data-open-learn-page="prayer">
+                <span class="topic-mark gold-mark" aria-hidden="true">G</span>
+                <span>
+                  <strong>Gebed</strong>
+                  <small>Volgorde</small>
+                </span>
+              </button>
+              <button class="learn-topic-button" type="button" data-open-learn-page="concepts">
+                <span class="topic-mark" aria-hidden="true">B</span>
+                <span>
+                  <strong>Begrippenkaart</strong>
+                  <small>Woorden</small>
+                </span>
+              </button>
+              <button class="learn-topic-button" type="button" data-open-learn-page="prayers">
+                <span class="topic-mark gold-mark" aria-hidden="true">5</span>
+                <span>
+                  <strong>Vijf gebeden</strong>
+                  <small>Namen en rakaat</small>
+                </span>
+              </button>
+              <button class="learn-topic-button" type="button" data-open-learn-page="fatiha">
+                <span class="topic-mark" aria-hidden="true">F</span>
+                <span>
+                  <strong>Al-Fatiha</strong>
+                  <small>Betekenis</small>
+                </span>
+              </button>
+              <button class="learn-topic-button" type="button" data-open-learn-page="dhikr">
+                <span class="topic-mark" aria-hidden="true">D</span>
+                <span>
+                  <strong>Dua & dhikr</strong>
+                  <small>Allah gedenken</small>
+                </span>
+              </button>
+            </nav>
+
+            <p class="guide-note">
+              Details kunnen per leraar of madhhab verschillen. Vraag bij twijfel een betrouwbare leraar.
+            </p>
+          </div>
+
+          <section class="learn-page hidden" data-learn-page="wudhu" aria-labelledby="wudhuPageTitle">
+            <button class="quiz-back-button learn-back-button" type="button" data-close-learn-page>
+              <span aria-hidden="true">←</span>
+              Terug naar Leren
+            </button>
+
+            <article class="knowledge-card">
+              <strong>Waarom doen moslims wudhu?</strong>
+              <p>Wudhu helpt je schoon en bewust naar het gebed te gaan. Je bereidt je lichaam en je hart voor.</p>
+            </article>
+
             <article class="guide-card">
               <div class="guide-heading">
                 <div class="guide-icon" aria-hidden="true">
@@ -220,7 +296,7 @@
                 </div>
                 <div>
                   <p class="eyebrow">Wudhu</p>
-                  <h3>De wassing stap voor stap</h3>
+                  <h3 id="wudhuPageTitle">De wassing stap voor stap</h3>
                 </div>
               </div>
 
@@ -262,7 +338,40 @@
                 </li>
               </ol>
 
+              <div class="mini-check-row" aria-label="Checks na wudhu">
+                <button
+                  class="learn-check-button"
+                  type="button"
+                  data-learn-key="wudhu-understood"
+                  data-learn-message="Wudhu-stappen gemarkeerd als begrepen."
+                  aria-pressed="false"
+                >
+                  Ik begrijp deze stap
+                </button>
+                <button
+                  class="learn-check-button"
+                  type="button"
+                  data-learn-key="wudhu-review"
+                  data-learn-message="Wudhu bewaard voor later."
+                  aria-pressed="false"
+                >
+                  Later opnieuw bekijken
+                </button>
+              </div>
+
               <p class="guide-note">Tip: doe het langzaam. Netjes leren is belangrijker dan snel klaar zijn.</p>
+            </article>
+          </section>
+
+          <section class="learn-page hidden" data-learn-page="prayer" aria-labelledby="prayerPageTitle">
+            <button class="quiz-back-button learn-back-button" type="button" data-close-learn-page>
+              <span aria-hidden="true">←</span>
+              Terug naar Leren
+            </button>
+
+            <article class="knowledge-card">
+              <strong>Waarom bidden moslims?</strong>
+              <p>Het gebed is een vast moment om Allah te aanbidden, dankbaar te zijn en je dag naar Hem terug te brengen.</p>
             </article>
 
             <article class="guide-card">
@@ -277,7 +386,7 @@
                 </div>
                 <div>
                   <p class="eyebrow">Gebed</p>
-                  <h3>Een simpele gebedsvolgorde</h3>
+                  <h3 id="prayerPageTitle">Een simpele gebedsvolgorde</h3>
                 </div>
               </div>
 
@@ -366,9 +475,201 @@
                 <span>Isha <strong>4</strong></span>
               </div>
 
-              <p class="guide-note">
-                Als je nog niet alles kent, begin met wat je leert en blijf stap voor stap oefenen.
-              </p>
+              <div class="mini-check-row" aria-label="Checks na gebed">
+                <button
+                  class="learn-check-button"
+                  type="button"
+                  data-learn-key="prayer-understood"
+                  data-learn-message="Gebedsvolgorde gemarkeerd als begrepen."
+                  aria-pressed="false"
+                >
+                  Ik begrijp deze stap
+                </button>
+                <button class="primary-button mini-quiz-button" type="button" data-go-view="quiz">Start korte quiz</button>
+              </div>
+            </article>
+          </section>
+
+          <section class="learn-page hidden" data-learn-page="concepts" aria-labelledby="dictionaryTitle">
+            <button class="quiz-back-button learn-back-button" type="button" data-close-learn-page>
+              <span aria-hidden="true">←</span>
+              Terug naar Leren
+            </button>
+
+            <article class="guide-card">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Begrippenkaart</p>
+                  <h3 id="dictionaryTitle">Beginnerswoorden</h3>
+                </div>
+              </div>
+
+              <dl class="dictionary-grid">
+                <div>
+                  <dt>Wudhu</dt>
+                  <dd>De wassing voor het gebed.</dd>
+                </div>
+                <div>
+                  <dt>Rakaat</dt>
+                  <dd>Een onderdeel van het gebed.</dd>
+                </div>
+                <div>
+                  <dt>Qiblah</dt>
+                  <dd>De gebedsrichting naar de Ka'bah.</dd>
+                </div>
+                <div>
+                  <dt>Sujud</dt>
+                  <dd>De neerknieling in het gebed.</dd>
+                </div>
+                <div>
+                  <dt>Ruku</dt>
+                  <dd>De buiging in het gebed.</dd>
+                </div>
+                <div>
+                  <dt>Sunnah</dt>
+                  <dd>Wat de Profeet, vrede zij met hem, ons leerde door woord en voorbeeld.</dd>
+                </div>
+                <div>
+                  <dt>Fard</dt>
+                  <dd>Een verplicht onderdeel of verplichte daad.</dd>
+                </div>
+                <div>
+                  <dt>Dhikr</dt>
+                  <dd>Allah gedenken met woorden, dua of reflectie.</dd>
+                </div>
+              </dl>
+
+              <div class="mini-check-row" aria-label="Checks na begrippenkaart">
+                <button
+                  class="learn-check-button"
+                  type="button"
+                  data-learn-key="concepts-understood"
+                  data-learn-message="Begrippenkaart gemarkeerd als begrepen."
+                  aria-pressed="false"
+                >
+                  Ik begrijp deze woorden
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <section class="learn-page hidden" data-learn-page="prayers" aria-labelledby="prayersPageTitle">
+            <button class="quiz-back-button learn-back-button" type="button" data-close-learn-page>
+              <span aria-hidden="true">←</span>
+              Terug naar Leren
+            </button>
+
+            <article class="guide-card">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Vijf gebeden</p>
+                  <h3 id="prayersPageTitle">De dag heeft vaste gebedsmomenten</h3>
+                </div>
+              </div>
+
+              <div class="knowledge-grid">
+                <article class="knowledge-card">
+                  <strong>Fajr</strong>
+                  <p>Het ochtendgebed voor zonsopkomst. Fajr heeft 2 rakaat.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Dhuhr</strong>
+                  <p>Het middaggebed. Dhuhr heeft 4 rakaat.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Asr</strong>
+                  <p>Het namiddaggebed. Asr heeft 4 rakaat.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Maghrib</strong>
+                  <p>Het gebed na zonsondergang. Maghrib heeft 3 rakaat.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Isha</strong>
+                  <p>Het nachtgebed. Isha heeft 4 rakaat.</p>
+                </article>
+              </div>
+
+              <p class="guide-note">Oefen vandaag alleen de namen in volgorde: Fajr, Dhuhr, Asr, Maghrib, Isha.</p>
+            </article>
+          </section>
+
+          <section class="learn-page hidden" data-learn-page="fatiha" aria-labelledby="fatihaPageTitle">
+            <button class="quiz-back-button learn-back-button" type="button" data-close-learn-page>
+              <span aria-hidden="true">←</span>
+              Terug naar Leren
+            </button>
+
+            <article class="guide-card">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Al-Fatiha</p>
+                  <h3 id="fatihaPageTitle">De opening van het gebed</h3>
+                </div>
+              </div>
+
+              <div class="practice-list">
+                <article class="practice-card">
+                  <span class="practice-check" aria-hidden="true"></span>
+                  <div>
+                    <strong>Al-Fatiha betekent de Opening</strong>
+                    <p>Deze surah wordt in elke rakaat van het gebed gereciteerd.</p>
+                  </div>
+                </article>
+                <article class="practice-card">
+                  <span class="practice-check" aria-hidden="true"></span>
+                  <div>
+                    <strong>Je prijst Allah</strong>
+                    <p>Je begint met lof, dankbaarheid en erkenning dat Allah de Heer van alles is.</p>
+                  </div>
+                </article>
+                <article class="practice-card">
+                  <span class="practice-check" aria-hidden="true"></span>
+                  <div>
+                    <strong>Je vraagt om leiding</strong>
+                    <p>Een belangrijk deel is de vraag om het rechte pad.</p>
+                  </div>
+                </article>
+              </div>
+
+              <p class="guide-note">Kleine oefening: leer eerst de betekenis in je eigen woorden voordat je meer uit je hoofd leert.</p>
+            </article>
+          </section>
+
+          <section class="learn-page hidden" data-learn-page="dhikr" aria-labelledby="dhikrPageTitle">
+            <button class="quiz-back-button learn-back-button" type="button" data-close-learn-page>
+              <span aria-hidden="true">←</span>
+              Terug naar Leren
+            </button>
+
+            <article class="guide-card">
+              <div class="section-heading compact-heading">
+                <div>
+                  <p class="eyebrow">Dua & dhikr</p>
+                  <h3 id="dhikrPageTitle">Allah gedenken door de dag</h3>
+                </div>
+              </div>
+
+              <div class="knowledge-grid">
+                <article class="knowledge-card">
+                  <strong>Dua</strong>
+                  <p>Een smeekbede. Je vraagt Allah om hulp, vergeving, leiding of iets goeds.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Dhikr</strong>
+                  <p>Allah gedenken met woorden zoals SubhanAllah, Alhamdulillah en Allahu Akbar.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Na het gebed</strong>
+                  <p>Veel mensen nemen na het gebed even rustig tijd voor dhikr en dua.</p>
+                </article>
+                <article class="knowledge-card">
+                  <strong>Door de dag</strong>
+                  <p>Je kunt Allah ook kort gedenken als je onderweg bent, wacht of iets moois ziet.</p>
+                </article>
+              </div>
+
+              <p class="guide-note">Begin simpel: kies vandaag een rustig moment voor een korte dua.</p>
             </article>
           </section>
         </section>
@@ -389,7 +690,10 @@
             <div>
               <p class="eyebrow">Totaal verdiend</p>
               <h3><span id="progressTotalXp">0</span> XP</h3>
-              <p class="muted">Elke 100 XP brengt je naar een nieuw level.</p>
+              <p class="muted">
+                Elke 100 XP brengt je naar een nieuw level. Dagreeks:
+                <span id="progressDailyStreak">0 dagen</span>.
+              </p>
             </div>
           </article>
 
@@ -501,15 +805,15 @@
             advertenties, tracking of externe analytics.
           </p>
           <a class="settings-link" href="privacy.html">Privacybeleid openen</a>
-          <a class="settings-link" href="support.html">Support openen</a>
+          <a class="settings-link" href="support.html">Feedback geven</a>
         </section>
 
         <section class="settings-info-block" aria-labelledby="learningNoteTitle">
           <p class="eyebrow">Leren</p>
-          <h3 id="learningNoteTitle">Basisgids</h3>
+          <h3 id="learningNoteTitle">Leeromgeving</h3>
           <p>
-            De leerpagina geeft een eenvoudige start. Details kunnen per leraar of madhhab verschillen; vraag bij
-            twijfel een betrouwbare leraar.
+            De leerpagina geeft korte uitleg, oefenstappen en checks. Details kunnen per leraar of madhhab verschillen;
+            vraag bij twijfel een betrouwbare leraar.
           </p>
         </section>
 
@@ -520,6 +824,8 @@
         <button class="secondary-button reset-button" id="resetProgressButton" type="button">
           Voortgang wissen
         </button>
+
+        <p class="app-credit">DeenQuest is opgericht door Omar Elsadawi.</p>
 
         <div class="reset-confirm hidden" id="resetConfirm" role="group" aria-labelledby="resetConfirmTitle">
           <strong id="resetConfirmTitle">Alle voortgang wissen?</strong>
@@ -563,6 +869,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=54" defer></script>
+    <script src="app.js?v=66" defer></script>
   </body>
 </html>

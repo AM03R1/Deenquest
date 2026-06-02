@@ -6,60 +6,99 @@
     <meta name="theme-color" content="#0b4335" />
     <meta
       name="description"
-      content="Support voor DeenQuest: hulp, privacy en contactinformatie."
+      content="Feedbackformulier voor DeenQuest."
     />
-    <title>Support - DeenQuest</title>
+    <script>
+      (() => {
+        let theme = "light";
+        try {
+          theme = localStorage.getItem("deenquest-theme") === "dark" ? "dark" : "light";
+        } catch {
+          theme = "light";
+        }
+
+        document.documentElement.dataset.theme = theme;
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute("content", theme === "dark" ? "#07131f" : "#0b4335");
+      })();
+    </script>
+    <title>Feedback - DeenQuest</title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=38" />
+    <link rel="stylesheet" href="styles.css?v=70" />
   </head>
   <body>
     <div class="app-shell document-shell">
-      <header class="app-header" aria-label="DeenQuest support">
+      <header class="app-header" aria-label="DeenQuest feedback">
         <div class="brand-lockup">
           <img class="brand-mark" src="assets/icon.svg" alt="" width="44" height="44" />
           <div>
             <h1>DeenQuest</h1>
-            <p class="brand-greeting">Support</p>
+            <p class="brand-greeting">Feedback</p>
           </div>
         </div>
         <a class="mini-link-button" href="index.html">Terug</a>
       </header>
 
       <main>
-        <article class="document-card">
-          <p class="eyebrow">Support</p>
-          <h2>Hulp bij DeenQuest</h2>
-          <p>
-            DeenQuest helpt je leren met doelen, quizzen, XP, badges en daily challenges. Je hebt geen account nodig en
-            je voortgang blijft lokaal op je apparaat.
-          </p>
+        <article class="document-card feedback-only-card">
+          <p class="eyebrow">Feedback</p>
+          <h2 id="feedbackTitle">Feedback geven</h2>
+          <form
+            class="feedback-form"
+            id="feedbackForm"
+            action="https://wa.me/"
+            method="get"
+            aria-labelledby="feedbackTitle"
+          >
+            <div class="feedback-field">
+              <label for="feedbackMessage">Je feedback</label>
+              <textarea
+                id="feedbackMessage"
+                name="body"
+                maxlength="900"
+                placeholder="Schrijf je feedback..."
+                required
+              ></textarea>
+            </div>
 
-          <h3>Veelvoorkomende vragen</h3>
-          <p>
-            Als XP, badges of daily challenges niet direct vernieuwen, herlaad de app een keer. De app werkt offline,
-            maar nieuwe versies kunnen daardoor soms pas na een herlaad zichtbaar zijn.
-          </p>
-
-          <h3>Voortgang wissen</h3>
-          <p>
-            Open Instellingen en kies "Voortgang wissen". De app vraagt eerst om bevestiging voordat lokale voortgang
-            wordt verwijderd.
-          </p>
-
-          <h3>Privacy</h3>
-          <p>
-            DeenQuest gebruikt geen account, advertenties, tracking of externe analytics.
-          </p>
-          <a class="settings-link" href="privacy.html">Privacybeleid openen</a>
-
-          <h3>Contact</h3>
-          <p>
-            Voor supportvragen kun je een melding openen via de GitHub-repository van DeenQuest.
-          </p>
-          <a class="settings-link" href="https://github.com/AM03R1/Deenquest/issues">Supportvraag openen</a>
+            <div class="feedback-submit-row">
+              <button class="primary-button" type="submit">Verstuur via WhatsApp</button>
+              <p class="feedback-help" id="feedbackStatus" aria-live="polite"></p>
+            </div>
+          </form>
         </article>
       </main>
     </div>
+    <script>
+      const whatsappPhoneNumber = "";
+      const feedbackForm = document.querySelector("#feedbackForm");
+      const feedbackStatus = document.querySelector("#feedbackStatus");
+
+      feedbackForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const data = new FormData(feedbackForm);
+        const message = String(data.get("body") || "").trim();
+
+        if (!message) {
+          feedbackStatus.textContent = "Schrijf eerst kort je feedback op.";
+          return;
+        }
+
+        const whatsappMessage = [
+          "Hoi Omar, hierbij mijn feedback over DeenQuest.",
+          "",
+          message,
+        ].join("\n");
+
+        const whatsappPath = whatsappPhoneNumber ? `https://wa.me/${whatsappPhoneNumber}` : feedbackForm.action;
+        const whatsappUrl = new URL(whatsappPath);
+        whatsappUrl.searchParams.set("text", whatsappMessage);
+        feedbackStatus.textContent = "WhatsApp wordt geopend met je feedback.";
+        window.location.href = whatsappUrl.toString();
+      });
+    </script>
   </body>
 </html>

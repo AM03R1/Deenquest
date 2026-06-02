@@ -8,10 +8,25 @@
       name="description"
       content="Privacybeleid van DeenQuest: voortgang blijft lokaal op het apparaat."
     />
+    <script>
+      (() => {
+        let theme = "light";
+        try {
+          theme = localStorage.getItem("deenquest-theme") === "dark" ? "dark" : "light";
+        } catch {
+          theme = "light";
+        }
+
+        document.documentElement.dataset.theme = theme;
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute("content", theme === "dark" ? "#07131f" : "#0b4335");
+      })();
+    </script>
     <title>Privacybeleid - DeenQuest</title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=38" />
+    <link rel="stylesheet" href="styles.css?v=70" />
   </head>
   <body>
     <div class="app-shell document-shell">
@@ -52,9 +67,9 @@
 
           <h3>Contact</h3>
           <p>
-            Voor vragen over privacy kun je contact opnemen via de supportpagina van DeenQuest.
+            Voor vragen over privacy kun je contact opnemen via de feedbackpagina van DeenQuest.
           </p>
-          <a class="settings-link" href="support.html">Support openen</a>
+          <a class="settings-link" href="support.html">Feedback openen</a>
         </article>
       </main>
     </div>
