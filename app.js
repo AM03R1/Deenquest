@@ -9,8 +9,9 @@ const MAX_HEARTS = 3;
 const MIN_HEARTS = 0;
 const HEART_REWARD_AMOUNT = 1;
 const RECENT_QUIZ_QUESTION_LIMIT = 60;
-const DAILY_CHALLENGE_FIXED_ID = null;
+const DAILY_CHALLENGE_FIXED_ID = "morning-goal";
 const DAILY_CHALLENGE_ROTATING_COUNT = 5;
+const DAILY_CHALLENGE_ROTATION_EXCLUDED_IDS = new Set(["first-goal"]);
 const DAILY_CHALLENGE_REPEAT_WAIT_DAYS = 7;
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -1922,16 +1923,26 @@ function isFixedDailyChallenge(challengeId) {
   return Boolean(challenge?.fixed || challengeId === DAILY_CHALLENGE_FIXED_ID);
 }
 
+function isRotatingDailyChallenge(challengeId) {
+  return (
+    Boolean(getChallengeById(challengeId)) &&
+    !isFixedDailyChallenge(challengeId) &&
+    !DAILY_CHALLENGE_ROTATION_EXCLUDED_IDS.has(challengeId)
+  );
+}
+
+function isSelectableDailyChallenge(challengeId) {
+  return isFixedDailyChallenge(challengeId) || isRotatingDailyChallenge(challengeId);
+}
+
 function getRotatingDailyChallengeIds() {
-  return challengeCatalog
-    .map((challenge) => challenge.id)
-    .filter((challengeId) => !isFixedDailyChallenge(challengeId));
+  return challengeCatalog.map((challenge) => challenge.id).filter((challengeId) => isRotatingDailyChallenge(challengeId));
 }
 
 function getDailyChallengeTargetCount() {
   const rotatingCount = Math.min(DAILY_CHALLENGE_ROTATING_COUNT, getRotatingDailyChallengeIds().length);
   const fixedCount = getChallengeById(DAILY_CHALLENGE_FIXED_ID) ? 1 : 0;
-  return Math.min(challengeCatalog.length, rotatingCount + fixedCount);
+  return rotatingCount + fixedCount;
 }
 
 function getSelectedDailyChallengeIds(dayKey = getLocalDayKey()) {
@@ -1957,7 +1968,7 @@ function ensureDailyChallengeSelection(dayKey = getLocalDayKey()) {
   const chosenIds = [...existingSelection];
   Object.keys(getDailyClaims(dayKey)).forEach((challengeId) => {
     if (
-      getChallengeById(challengeId) &&
+      isSelectableDailyChallenge(challengeId) &&
       !chosenIds.includes(challengeId) &&
       chosenIds.length < targetCount
     ) {
@@ -1977,7 +1988,7 @@ function ensureDailyChallengeSelection(dayKey = getLocalDayKey()) {
 
 function normalizeDailyChallengeIdList(selection, targetCount = getDailyChallengeTargetCount(), dayKey = getLocalDayKey()) {
   const selectedIds = [];
-  const validIds = challengeCatalog.map((challenge) => challenge.id);
+  const validIds = challengeCatalog.map((challenge) => challenge.id).filter((challengeId) => isSelectableDailyChallenge(challengeId));
 
   if (getChallengeById(DAILY_CHALLENGE_FIXED_ID)) {
     selectedIds.push(DAILY_CHALLENGE_FIXED_ID);
@@ -2004,8 +2015,7 @@ function pickDailyChallengeIds(dayKey, count, excludedIds = []) {
 
   const excluded = new Set(excludedIds);
   const repeatWaitIds = getDailyChallengeRepeatWaitIds(dayKey);
-  const pool = challengeCatalog
-    .map((challenge) => challenge.id)
+  const pool = getRotatingDailyChallengeIds()
     .filter((challengeId) => !excluded.has(challengeId) && !repeatWaitIds.has(challengeId));
   const usedIds = getPreviouslyUsedDailyChallengeIds(dayKey);
   const previousIds = getMostRecentDailyChallengeIds(dayKey);
@@ -2065,7 +2075,7 @@ function pickChallengeIdFromPool(pool, selectedIds, usedIds, previousIds, catego
 function hasDailyChallengeCategoryMix(challengeIds, dayKey) {
   const availableCategories = new Set(
     challengeCatalog
-      .filter((challenge) => !isDailyChallengeOnRepeatWait(challenge.id, dayKey))
+      .filter((challenge) => isSelectableDailyChallenge(challenge.id) && !isDailyChallengeOnRepeatWait(challenge.id, dayKey))
       .map((challenge) => challenge.category)
       .filter(Boolean)
   );
