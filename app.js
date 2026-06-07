@@ -11,6 +11,7 @@ const HEART_REWARD_AMOUNT = 1;
 const RECENT_QUIZ_QUESTION_LIMIT = 60;
 const DAILY_CHALLENGE_FIXED_ID = "morning-goal";
 const DAILY_CHALLENGE_ROTATING_COUNT = 5;
+const DAILY_CHALLENGE_GOAL_TARGET_COUNT = 3;
 const DAILY_CHALLENGE_ROTATION_EXCLUDED_IDS = new Set(["first-goal"]);
 const DAILY_CHALLENGE_REPEAT_WAIT_DAYS = 7;
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
@@ -18,38 +19,44 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 const badgeCatalog = [
   {
     id: "goal-starter",
-    title: "Doelstarter",
-    description: "Je hebt je eerste persoonlijke doel afgerond.",
+    title: "Eerste doel gehaald",
+    description: "Rond 1 persoonlijk doel af en bewijs dat je je voornemen omzet in actie.",
+    action: "Begin klein: kies een doel dat je vandaag echt kunt afstrepen.",
     mark: "DS",
   },
   {
     id: "quiz-starter",
-    title: "Quizstarter",
-    description: "Je hebt je eerste quizronde afgemaakt.",
+    title: "Eerste quizronde",
+    description: "Maak 1 volledige quiz af en zet je eerste stap in kennis oefenen.",
+    action: "Kies een onderwerp op beginnerniveau en rond de ronde helemaal af.",
     mark: "QS",
   },
   {
     id: "kenniszoeker",
     title: "Kenniszoeker",
-    description: "Je haalde minimaal 6 van de 10 goed.",
+    description: "Haal minimaal 6 van de 10 goed en laat zien dat je de basis begrijpt.",
+    action: "Lees de uitleg voor de quiz en verbeter je score vraag voor vraag.",
     mark: "KZ",
   },
   {
     id: "doorzetter",
-    title: "Doorzetter",
-    description: "Je rondde drie persoonlijke doelen af.",
+    title: "Doelritme",
+    description: "Rond 3 persoonlijke doelen af en bouw een vaste leergewoonte op.",
+    action: "Plan meerdere kleine acties, zoals lezen, herhalen of op tijd bidden.",
     mark: "DZ",
   },
   {
     id: "ronde-maker",
-    title: "Rondemaker",
-    description: "Je maakte drie quizrondes af.",
+    title: "Quizritme",
+    description: "Maak 3 quizrondes af en train je kennis over meerdere momenten.",
+    action: "Doe korte rondes verspreid over je dag om sneller vooruitgang te zien.",
     mark: "RM",
   },
   {
     id: "perfecte-ronde",
     title: "Perfecte ronde",
-    description: "Je haalde een quiz met alles goed.",
+    description: "Haal 10 van de 10 goed in een quiz en rond een onderwerp foutloos af.",
+    action: "Herhaal je sterkste onderwerp en ga voor een ronde zonder fouten.",
     mark: "PR",
   },
 ];
@@ -263,6 +270,61 @@ const challengeCatalog = [
     badgeId: "doorzetter",
     progressText: (value, target) => `${value}/${target} doelen`,
     getProgress: () => getTodaysCompletedGoalCount(),
+  },
+  {
+    id: "plan-goal",
+    title: "Plan je dag",
+    description: "Voeg vandaag 1 persoonlijk doel toe.",
+    category: "goal",
+    xp: 20,
+    target: 1,
+    badgeId: "goal-starter",
+    progressText: (value, target) => `${value}/${target} gepland`,
+    getProgress: () => getTodaysCreatedGoalCount(),
+  },
+  {
+    id: "two-planned-goals",
+    title: "Twee plannen",
+    description: "Voeg vandaag 2 persoonlijke doelen toe.",
+    category: "goal",
+    xp: 30,
+    target: 2,
+    badgeId: "doorzetter",
+    progressText: (value, target) => `${value}/${target} gepland`,
+    getProgress: () => getTodaysCreatedGoalCount(),
+  },
+  {
+    id: "goal-action-pair",
+    title: "Doelstappen",
+    description: "Voeg of rond vandaag 2 persoonlijke doelen af.",
+    category: "goal",
+    xp: 30,
+    target: 2,
+    badgeId: "doorzetter",
+    progressText: (value, target) => `${value}/${target} stappen`,
+    getProgress: () => getTodaysGoalActionCount(),
+  },
+  {
+    id: "goal-action-trio",
+    title: "Actieve doeldag",
+    description: "Voeg of rond vandaag 3 persoonlijke doelen af.",
+    category: "goal",
+    xp: 40,
+    target: 3,
+    badgeId: "doorzetter",
+    progressText: (value, target) => `${value}/${target} stappen`,
+    getProgress: () => getTodaysGoalActionCount(),
+  },
+  {
+    id: "goal-start-finish",
+    title: "Van plan naar actie",
+    description: "Voeg vandaag een doel toe en rond een doel af.",
+    category: "goal",
+    xp: 35,
+    target: 2,
+    badgeId: "doorzetter",
+    progressText: (value, target) => `${value}/${target} stappen`,
+    getProgress: () => Math.min(getTodaysCreatedGoalCount(), 1) + Math.min(getTodaysCompletedGoalCount(), 1),
   },
   {
     id: "basis-round",
@@ -1704,8 +1766,6 @@ const dom = {
   progressDailyStreak: document.querySelector("#progressDailyStreak"),
   progressRing: document.querySelector("#progressRing"),
   ringPercent: document.querySelector("#ringPercent"),
-  badgeCount: document.querySelector("#badgeCount"),
-  badgeList: document.querySelector("#badgeList"),
   dailyChallengeTimer: document.querySelector("#dailyChallengeTimer"),
   challengeList: document.querySelector("#challengeList"),
   quizHistoryList: document.querySelector("#quizHistoryList"),
@@ -1965,7 +2025,7 @@ function ensureDailyChallengeSelection(dayKey = getLocalDayKey()) {
     return existingSelection;
   }
 
-  const chosenIds = [...existingSelection];
+  const chosenIds = normalizeDailyChallengeIdList([], targetCount, dayKey);
   Object.keys(getDailyClaims(dayKey)).forEach((challengeId) => {
     if (
       isSelectableDailyChallenge(challengeId) &&
@@ -1980,13 +2040,18 @@ function ensureDailyChallengeSelection(dayKey = getLocalDayKey()) {
     if (!chosenIds.includes(challengeId)) chosenIds.push(challengeId);
   });
 
-  const selection = normalizeDailyChallengeIdList(chosenIds, targetCount, dayKey);
+  const selection = normalizeDailyChallengeIdList(chosenIds, targetCount, dayKey, new Set(chosenIds));
   state.dailyChallengeSelections[dayKey] = selection;
   saveState();
   return selection;
 }
 
-function normalizeDailyChallengeIdList(selection, targetCount = getDailyChallengeTargetCount(), dayKey = getLocalDayKey()) {
+function normalizeDailyChallengeIdList(
+  selection,
+  targetCount = getDailyChallengeTargetCount(),
+  dayKey = getLocalDayKey(),
+  repeatWaitAllowedIds = new Set()
+) {
   const selectedIds = [];
   const validIds = challengeCatalog.map((challenge) => challenge.id).filter((challengeId) => isSelectableDailyChallenge(challengeId));
 
@@ -2000,7 +2065,7 @@ function normalizeDailyChallengeIdList(selection, targetCount = getDailyChalleng
     if (
       validIds.includes(challengeId) &&
       !selectedIds.includes(challengeId) &&
-      !isDailyChallengeOnRepeatWait(challengeId, dayKey) &&
+      (!isDailyChallengeOnRepeatWait(challengeId, dayKey) || repeatWaitAllowedIds.has(challengeId)) &&
       selectedIds.length < targetCount
     ) {
       selectedIds.push(challengeId);
@@ -2015,18 +2080,42 @@ function pickDailyChallengeIds(dayKey, count, excludedIds = []) {
 
   const excluded = new Set(excludedIds);
   const repeatWaitIds = getDailyChallengeRepeatWaitIds(dayKey);
-  const pool = getRotatingDailyChallengeIds()
-    .filter((challengeId) => !excluded.has(challengeId) && !repeatWaitIds.has(challengeId));
+  const pool = getRotatingDailyChallengeIds().filter(
+    (challengeId) => !excluded.has(challengeId) && !repeatWaitIds.has(challengeId)
+  );
+  const fallbackPool = getRotatingDailyChallengeIds().filter((challengeId) => !excluded.has(challengeId));
   const usedIds = getPreviouslyUsedDailyChallengeIds(dayKey);
   const previousIds = getMostRecentDailyChallengeIds(dayKey);
   const selectedIds = [];
+  const categoryTargets = getDailyChallengeCategoryTargets();
 
-  ["goal", "quiz"].forEach((category) => {
-    if (selectedIds.length >= count || hasChallengeCategory([...excludedIds, ...selectedIds], category)) return;
+  const pickCategoryChallenge = (category) => {
+    const challengeId =
+      pickChallengeIdFromPool(pool, selectedIds, usedIds, previousIds, category) ||
+      pickChallengeIdFromPool(fallbackPool, selectedIds, usedIds, previousIds, category) ||
+      pickChallengeIdFromPool(fallbackPool, selectedIds, new Set(), previousIds, category) ||
+      pickChallengeIdFromPool(fallbackPool, selectedIds, new Set(), new Set(), category);
 
-    const challengeId = pickChallengeIdFromPool(pool, selectedIds, usedIds, previousIds, category);
     if (challengeId) selectedIds.push(challengeId);
+    return challengeId;
+  };
+
+  Object.entries(categoryTargets).forEach(([category, target]) => {
+    while (
+      selectedIds.length < count &&
+      getChallengeCategoryCount([...excludedIds, ...selectedIds], category) < target
+    ) {
+      if (!pickCategoryChallenge(category)) break;
+    }
   });
+
+  while (selectedIds.length < count) {
+    const missingCategory = Object.entries(categoryTargets).find(([category, target]) => {
+      return getChallengeCategoryCount([...excludedIds, ...selectedIds], category) < target;
+    })?.[0];
+
+    if (!missingCategory || !pickCategoryChallenge(missingCategory)) break;
+  }
 
   getDailyChallengeFillPool(pool, selectedIds, usedIds, count - selectedIds.length, [
     ...excludedIds,
@@ -2036,8 +2125,8 @@ function pickDailyChallengeIds(dayKey, count, excludedIds = []) {
     .forEach((challengeId) => selectedIds.push(challengeId));
   if (selectedIds.length >= count) return selectedIds;
 
-  const refillPool = pool.filter((challengeId) => !selectedIds.includes(challengeId) && !previousIds.has(challengeId));
-  const fallbackPool = getDailyChallengeFillPool(
+  const refillPool = fallbackPool.filter((challengeId) => !selectedIds.includes(challengeId) && !previousIds.has(challengeId));
+  const finalFillPool = getDailyChallengeFillPool(
     refillPool.length ? refillPool : pool,
     selectedIds,
     new Set(),
@@ -2047,19 +2136,29 @@ function pickDailyChallengeIds(dayKey, count, excludedIds = []) {
 
   return [
     ...selectedIds,
-    ...shuffleStrings(fallbackPool).slice(0, count - selectedIds.length),
+    ...shuffleStrings(finalFillPool).slice(0, count - selectedIds.length),
   ];
 }
 
 function getDailyChallengeFillPool(pool, selectedIds, usedIds, remainingCount, categoryContextIds = selectedIds) {
   const candidates = pool.filter((challengeId) => !selectedIds.includes(challengeId) && !usedIds.has(challengeId));
 
-  if (remainingCount <= 0 || !hasChallengeCategory(categoryContextIds, "goal")) {
+  if (remainingCount <= 0) {
     return shuffleStrings(candidates);
   }
 
-  const nonGoalCandidates = candidates.filter((challengeId) => getChallengeById(challengeId)?.category !== "goal");
-  return shuffleStrings(nonGoalCandidates.length >= remainingCount ? nonGoalCandidates : candidates);
+  const categoryTargets = getDailyChallengeCategoryTargets();
+  const underrepresentedCategories = Object.entries(categoryTargets)
+    .filter(([category, target]) => getChallengeCategoryCount(categoryContextIds, category) < target)
+    .map(([category]) => category);
+  const prioritizedCandidates = candidates.filter((challengeId) =>
+    underrepresentedCategories.includes(getChallengeById(challengeId)?.category)
+  );
+
+  if (!prioritizedCandidates.length) return shuffleStrings(candidates);
+
+  const otherCandidates = candidates.filter((challengeId) => !prioritizedCandidates.includes(challengeId));
+  return [...shuffleStrings(prioritizedCandidates), ...shuffleStrings(otherCandidates)];
 }
 
 function pickChallengeIdFromPool(pool, selectedIds, usedIds, previousIds, category) {
@@ -2073,20 +2172,40 @@ function pickChallengeIdFromPool(pool, selectedIds, usedIds, previousIds, catego
 }
 
 function hasDailyChallengeCategoryMix(challengeIds, dayKey) {
-  const availableCategories = new Set(
-    challengeCatalog
-      .filter((challenge) => isSelectableDailyChallenge(challenge.id) && !isDailyChallengeOnRepeatWait(challenge.id, dayKey))
-      .map((challenge) => challenge.category)
-      .filter(Boolean)
-  );
+  const categoryTargets = getDailyChallengeCategoryTargets(challengeIds.length);
 
-  return ["goal", "quiz"].every((category) => {
-    return !availableCategories.has(category) || hasChallengeCategory(challengeIds, category);
+  return Object.entries(categoryTargets).every(([category, target]) => {
+    const availableCount = getDailyChallengeAvailableCategoryCount(category, dayKey, challengeIds);
+    const requiredCount = Math.min(target, availableCount);
+    return getChallengeCategoryCount(challengeIds, category) >= requiredCount;
   });
 }
 
 function hasChallengeCategory(challengeIds, category) {
   return challengeIds.some((challengeId) => getChallengeById(challengeId)?.category === category);
+}
+
+function getDailyChallengeCategoryTargets(targetCount = getDailyChallengeTargetCount()) {
+  const goalTarget = Math.min(DAILY_CHALLENGE_GOAL_TARGET_COUNT, targetCount);
+
+  return {
+    goal: goalTarget,
+    quiz: Math.max(0, targetCount - goalTarget),
+  };
+}
+
+function getChallengeCategoryCount(challengeIds, category) {
+  return challengeIds.filter((challengeId) => getChallengeById(challengeId)?.category === category).length;
+}
+
+function getDailyChallengeAvailableCategoryCount(category, dayKey, selectedIds = []) {
+  return challengeCatalog.filter((challenge) => {
+    return (
+      challenge.category === category &&
+      isSelectableDailyChallenge(challenge.id) &&
+      (!isDailyChallengeOnRepeatWait(challenge.id, dayKey) || selectedIds.includes(challenge.id))
+    );
+  }).length;
 }
 
 function getPreviouslyUsedDailyChallengeIds(dayKey) {
@@ -2419,6 +2538,14 @@ function getTodaysCompletedGoalCount(dayKey = getLocalDayKey()) {
   return state.goals.filter((goal) => goal.completed && isToday(goal.completedAt, dayKey)).length;
 }
 
+function getTodaysCreatedGoalCount(dayKey = getLocalDayKey()) {
+  return state.goals.filter((goal) => isToday(goal.createdAt, dayKey)).length;
+}
+
+function getTodaysGoalActionCount(dayKey = getLocalDayKey()) {
+  return getTodaysCreatedGoalCount(dayKey) + getTodaysCompletedGoalCount(dayKey);
+}
+
 function getTodaysFinishedQuizCount(dayKey = getLocalDayKey()) {
   return state.quizResults.filter((result) => isToday(result.date, dayKey)).length;
 }
@@ -2542,21 +2669,21 @@ function renderChallenges() {
     return b.progressPercent - a.progressPercent;
   });
   const claimableCount = challenges.filter((challenge) => challenge.isReady && !challenge.isClaimed).length;
+  const heartRewardChallengeId = getHeartRewardChallengeId(challenges);
 
-  dom.challengeList.innerHTML = challenges.map((challenge) => renderChallengeItem(challenge)).join("");
+  dom.challengeList.innerHTML = challenges.map((challenge) => renderChallengeItem(challenge, heartRewardChallengeId)).join("");
   dom.progressTabButton.classList.toggle("has-alert", claimableCount > 0);
   dom.progressTabButton.setAttribute(
     "aria-label",
     claimableCount > 0 ? `Progressie, ${claimableCount} dagelijkse challenge te claimen` : "Progressie"
   );
-  renderBadges();
 }
 
-function renderChallengeItem(challenge) {
+function renderChallengeItem(challenge, heartRewardChallengeId = getHeartRewardChallengeId()) {
   const statusLabel = challenge.isClaimed ? "Vandaag voltooid" : challenge.isReady ? "Klaar om te claimen" : "Nog bezig";
   const categoryLabel = challenge.category === "goal" ? "Doel" : "Quiz";
   const fixedLabel = challenge.isFixed ? `<span class="challenge-fixed">Vast</span>` : "";
-  const rewardType = getChallengeRewardType();
+  const rewardType = getChallengeRewardType(challenge, heartRewardChallengeId);
   const rewardLabel = challenge.isClaimed ? "Beloning geclaimd" : getChallengeRewardLabel(challenge, rewardType);
   const buttonLabel = challenge.isClaimed
     ? "Bekijk beloning"
@@ -2601,34 +2728,32 @@ function renderChallengeItem(challenge) {
   `;
 }
 
-function getChallengeRewardType() {
-  return hasMissingHearts() ? "heart" : "xp";
+function getChallengeRewardType(challenge, heartRewardChallengeId = getHeartRewardChallengeId()) {
+  if (!hasMissingHearts()) return "xp";
+  return challenge?.id === heartRewardChallengeId ? "heart" : "xp";
 }
 
-function getChallengeRewardLabel(challenge, rewardType = getChallengeRewardType()) {
+function getChallengeRewardLabel(challenge, rewardType = getChallengeRewardType(challenge)) {
   return rewardType === "heart" ? `+${HEART_REWARD_AMOUNT} hartje` : `+${challenge.xp} XP`;
 }
 
-function renderBadges() {
-  const earnedCount = badgeCatalog.filter((badge) => getBadgeEarnedAt(badge.id)).length;
-  dom.badgeCount.textContent = `${earnedCount}/${badgeCatalog.length}`;
+function getHeartRewardChallengeId(challenges = getChallengeModels()) {
+  if (!hasMissingHearts()) return null;
 
-  dom.badgeList.innerHTML = badgeCatalog
-    .map((badge) => {
-      const earnedAt = getBadgeEarnedAt(badge.id);
-      const earnedText = earnedAt ? `Behaald op ${formatDateLabel(earnedAt)}` : "Nog te behalen";
-      return `
-        <article class="badge-item ${earnedAt ? "earned" : ""}">
-          <span class="badge-mark" aria-hidden="true">${escapeHtml(badge.mark)}</span>
-          <div>
-            <strong>${escapeHtml(badge.title)}</strong>
-            <p>${escapeHtml(badge.description)}</p>
-            <span>${escapeHtml(earnedText)}</span>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+  const unclaimedChallenges = challenges.filter((challenge) => !challenge.isClaimed);
+  const candidates = unclaimedChallenges.length ? unclaimedChallenges : challenges;
+
+  return [...candidates].sort(compareChallengeDifficulty)[0]?.id || null;
+}
+
+function compareChallengeDifficulty(firstChallenge, secondChallenge) {
+  const xpDifference = Number(secondChallenge.xp || 0) - Number(firstChallenge.xp || 0);
+  if (xpDifference) return xpDifference;
+
+  const targetDifference = Number(secondChallenge.target || 0) - Number(firstChallenge.target || 0);
+  if (targetDifference) return targetDifference;
+
+  return String(firstChallenge.id).localeCompare(String(secondChallenge.id));
 }
 
 function claimChallenge(challengeId) {
@@ -2640,7 +2765,8 @@ function claimChallenge(challengeId) {
     return;
   }
 
-  const challenge = getChallengeModels().find((item) => item.id === challengeId);
+  const challenges = getChallengeModels();
+  const challenge = challenges.find((item) => item.id === challengeId);
   if (!challenge || !challenge.isReady || challenge.isClaimed) return;
 
   const claimedAt = new Date().toISOString();
@@ -2650,7 +2776,7 @@ function claimChallenge(challengeId) {
   }
   if (!state.badges || typeof state.badges !== "object") state.badges = {};
   const isNewBadge = !state.badges[challenge.badgeId];
-  const rewardType = getChallengeRewardType();
+  const rewardType = getChallengeRewardType(challenge, getHeartRewardChallengeId(challenges));
   state.dailyChallengeClaims[dayKey][challenge.id] = claimedAt;
   if (!state.badges[challenge.badgeId]) state.badges[challenge.badgeId] = claimedAt;
   const heartAdded = rewardType === "heart" ? addHeart() : false;
@@ -3436,7 +3562,7 @@ function startDailyChallengeTimer() {
   dailyChallengeTimer = window.setInterval(updateDailyChallengeTimer, 1000);
 }
 
-function showChallengeCelebration(challenge, isNewBadge, rewardType = getChallengeRewardType(), heartAdded = false) {
+function showChallengeCelebration(challenge, isNewBadge, rewardType = getChallengeRewardType(challenge), heartAdded = false) {
   const rewardText =
     rewardType === "heart"
       ? heartAdded

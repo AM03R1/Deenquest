@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b4335" />
+    <meta
+      name="description"
+      content="Controleer je DeenQuest-feedback voordat je deze via WhatsApp verstuurt."
+    />
+    <script>
+      (() => {
+        let theme = "light";
+        try {
+          theme = localStorage.getItem("deenquest-theme") === "dark" ? "dark" : "light";
+        } catch {
+          theme = "light";
+        }
+
+        document.documentElement.dataset.theme = theme;
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute("content", theme === "dark" ? "#07131f" : "#0b4335");
+      })();
+    </script>
+    <title>Feedback overzicht - DeenQuest</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icon.svg" />
+    <link rel="stylesheet" href="styles.css?v=94" />
+  </head>
+  <body>
+    <div class="app-shell document-shell">
+      <header class="app-header" aria-label="DeenQuest feedback overzicht">
+        <div class="brand-lockup">
+          <img class="brand-mark" src="assets/icon.svg" alt="" width="44" height="44" />
+          <div>
+            <h1>DeenQuest</h1>
+            <p class="brand-greeting">Feedback overzicht</p>
+          </div>
+        </div>
+        <a class="mini-link-button" href="support.html">Terug</a>
+      </header>
+
+      <main>
+        <article class="document-card feedback-review-page">
+          <div class="feedback-overview-hero">
+            <p class="eyebrow">Controle</p>
+            <h2 id="feedbackOverviewTitle">Laatste check</h2>
+            <p class="feedback-review-intro">
+              Controleer je antwoorden voordat ze via WhatsApp worden verstuurd.
+            </p>
+
+            <section class="feedback-review-summary" id="feedbackReviewSummary" aria-label="Samenvatting">
+              <div>
+                <strong id="feedbackAnswerCount">0</strong>
+                <span>onderdelen ingevuld</span>
+              </div>
+              <div>
+                <strong id="feedbackNoteCount">0</strong>
+                <span>toelichtingen toegevoegd</span>
+              </div>
+            </section>
+          </div>
+
+          <section class="feedback-review-panel" id="feedbackReviewPanel" aria-labelledby="feedbackReviewListTitle">
+            <div class="feedback-review-panel-header">
+              <h3 id="feedbackReviewListTitle">Jouw feedback</h3>
+              <span id="feedbackReviewReadyLabel">Klaar om te versturen</span>
+            </div>
+            <ol class="feedback-review-list feedback-review-list-enhanced" id="feedbackReviewList"></ol>
+          </section>
+
+          <section class="feedback-empty-state" id="feedbackEmptyState" hidden>
+            <h3>Geen overzicht gevonden</h3>
+            <p>Vul eerst het feedbackformulier in.</p>
+          </section>
+
+          <div class="feedback-review-actions feedback-review-page-actions">
+            <a class="secondary-button" href="support.html">Wijzigen</a>
+            <button class="primary-button" type="button" id="feedbackSendButton">Verstuur via WhatsApp</button>
+          </div>
+          <p class="feedback-help" id="feedbackOverviewStatus" aria-live="polite"></p>
+        </article>
+      </main>
+    </div>
+
+    <script>
+      const feedbackReviewStorageKey = "deenquest-feedback-review-v1";
+      const whatsappPhoneNumber = "31685612471";
+      const defaultAnswerNoteFields = {
+        overallNote: "Algemeen oordeel",
+        quizNote: "Quizvragen",
+        dailyChallengeNote: "Daily challenges",
+        heartsNote: "Hartensysteem",
+        designNote: "Design en navigatie",
+        technicalNote: "Techniek",
+        priorityNote: "Eerste verbeterpunt",
+      };
+      const feedbackReviewList = document.querySelector("#feedbackReviewList");
+      const feedbackReviewPanel = document.querySelector("#feedbackReviewPanel");
+      const feedbackReviewSummary = document.querySelector("#feedbackReviewSummary");
+      const feedbackAnswerCount = document.querySelector("#feedbackAnswerCount");
+      const feedbackNoteCount = document.querySelector("#feedbackNoteCount");
+      const feedbackEmptyState = document.querySelector("#feedbackEmptyState");
+      const feedbackSendButton = document.querySelector("#feedbackSendButton");
+      const feedbackOverviewStatus = document.querySelector("#feedbackOverviewStatus");
+      let preparedWhatsappUrl = "";
+
+      function readStoredJson(key) {
+        try {
+          const value = sessionStorage.getItem(key);
+          return value ? JSON.parse(value) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function asText(value) {
+        return typeof value === "string" ? value.trim() : "";
+      }
+
+      function normalizePair(entry) {
+        if (!Array.isArray(entry)) return null;
+
+        const label = asText(entry[0]);
+        const value = asText(entry[1]);
+
+        return label && value ? [label, value] : null;
+      }
+
+      function normalizeTextBlock(entry) {
+        if (!Array.isArray(entry)) return null;
+
+        const name = asText(entry[0]);
+        const label = asText(entry[1]);
+        const value = asText(entry[2]);
+
+        return name && label && value ? [name, label, value] : null;
+      }
+
+      function buildWhatsappUrl(message, storedUrl) {
+        if (asText(storedUrl)) return storedUrl;
+        if (!asText(message)) return "";
+
+        const whatsappPath = whatsappPhoneNumber ? `https://wa.me/${whatsappPhoneNumber}` : "https://wa.me/";
+        const whatsappUrl = new URL(whatsappPath);
+        whatsappUrl.searchParams.set("text", message);
+        return whatsappUrl.toString();
+      }
+
+      function readFeedbackReview() {
+        const stored = readStoredJson(feedbackReviewStorageKey);
+
+        if (!stored || typeof stored !== "object") return null;
+
+        const answers = Array.isArray(stored.answers) ? stored.answers.map(normalizePair).filter(Boolean) : [];
+        const textBlocks = Array.isArray(stored.textBlocks)
+          ? stored.textBlocks.map(normalizeTextBlock).filter(Boolean)
+          : [];
+        const answerNoteFields =
+          stored.answerNoteFields && typeof stored.answerNoteFields === "object"
+            ? stored.answerNoteFields
+            : defaultAnswerNoteFields;
+        const whatsappMessage = asText(stored.whatsappMessage);
+        const whatsappUrl = buildWhatsappUrl(whatsappMessage, stored.whatsappUrl);
+
+        if (!answers.length || !whatsappUrl) return null;
+
+        return { answers, answerNoteFields, textBlocks, whatsappUrl };
+      }
+
+      function createReviewItem(label, value, note, itemNumber) {
+        const item = document.createElement("li");
+        const index = document.createElement("span");
+        const content = document.createElement("div");
+        const title = document.createElement("p");
+        const detail = document.createElement("p");
+
+        item.className = "feedback-review-item feedback-review-row";
+        index.className = "feedback-review-index";
+        content.className = "feedback-review-content";
+        title.className = "feedback-review-label";
+        detail.className = "feedback-review-value";
+        index.textContent = String(itemNumber);
+        title.textContent = label;
+        detail.textContent = value;
+        content.append(title, detail);
+
+        if (note) {
+          const noteBlock = document.createElement("div");
+          const noteTitle = document.createElement("p");
+          const noteDetail = document.createElement("p");
+
+          noteBlock.className = "feedback-review-note";
+          noteTitle.className = "feedback-review-note-label";
+          noteDetail.className = "feedback-review-note-value";
+          noteTitle.textContent = "Toelichting";
+          noteDetail.textContent = note;
+          noteBlock.append(noteTitle, noteDetail);
+          content.append(noteBlock);
+        }
+
+        item.append(index, content);
+        return item;
+      }
+
+      function renderEmptyState() {
+        preparedWhatsappUrl = "";
+        feedbackReviewPanel.hidden = true;
+        feedbackReviewList.hidden = true;
+        feedbackReviewSummary.hidden = true;
+        feedbackEmptyState.hidden = false;
+        feedbackSendButton.disabled = true;
+        feedbackOverviewStatus.textContent = "Er staat nog geen feedback klaar om te versturen.";
+      }
+
+      function renderFeedbackReview(review) {
+        const textByAnswerLabel = new Map();
+        const standaloneTextBlocks = [];
+
+        review.textBlocks.forEach(([name, label, value]) => {
+          const answerLabel = review.answerNoteFields[name];
+
+          if (answerLabel) {
+            textByAnswerLabel.set(answerLabel, value);
+            return;
+          }
+
+          standaloneTextBlocks.push([label, value]);
+        });
+
+        const answerItems = review.answers.map(([label, value], index) =>
+          createReviewItem(label, value, textByAnswerLabel.get(label), index + 1)
+        );
+        const standaloneItems = standaloneTextBlocks.map(([label, value], index) =>
+          createReviewItem(label, value, "", answerItems.length + index + 1)
+        );
+
+        feedbackReviewPanel.hidden = false;
+        feedbackReviewList.hidden = false;
+        feedbackReviewSummary.hidden = false;
+        feedbackEmptyState.hidden = true;
+        feedbackSendButton.disabled = false;
+        feedbackReviewList.replaceChildren(...answerItems, ...standaloneItems);
+        feedbackAnswerCount.textContent = String(review.answers.length);
+        feedbackNoteCount.textContent = String(review.textBlocks.length);
+        preparedWhatsappUrl = review.whatsappUrl;
+      }
+
+      const review = readFeedbackReview();
+
+      if (review) {
+        renderFeedbackReview(review);
+      } else {
+        renderEmptyState();
+      }
+
+      feedbackSendButton?.addEventListener("click", () => {
+        if (!preparedWhatsappUrl) {
+          renderEmptyState();
+          return;
+        }
+
+        feedbackOverviewStatus.textContent = "WhatsApp wordt geopend met je feedback.";
+        window.location.href = preparedWhatsappUrl;
+      });
+    </script>
+  </body>
+</html>

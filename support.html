@@ -26,7 +26,7 @@
     <title>Feedback - DeenQuest</title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=71" />
+    <link rel="stylesheet" href="styles.css?v=94" />
   </head>
   <body>
     <div class="app-shell document-shell">
@@ -44,29 +44,277 @@
       <main>
         <article class="document-card feedback-only-card">
           <p class="eyebrow">Feedback</p>
-          <h2 id="feedbackTitle">Feedback geven</h2>
+          <h2 id="feedbackTitle">Korte feedback</h2>
           <form
             class="feedback-form"
             id="feedbackForm"
             action="https://wa.me/"
             method="get"
             aria-labelledby="feedbackTitle"
+            novalidate
           >
-            <div class="feedback-field">
-              <label for="feedbackMessage">Je feedback</label>
-              <textarea
-                id="feedbackMessage"
-                name="body"
-                maxlength="900"
-                placeholder="Schrijf je feedback..."
-                required
-              ></textarea>
+            <fieldset class="feedback-question">
+              <legend>Testmoment</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="testerContext" value="Ik test de app voor het eerst" required />
+                  <span>Eerste keer getest</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="testerContext" value="Ik heb de app meerdere keren getest" />
+                  <span>Meerdere keren getest</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="testerContext" value="Ik heb de app alleen kort bekeken" />
+                  <span>Alleen kort bekeken</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Algemeen oordeel</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="overallExperience" value="Ik zou deze app gebruiken" required />
+                  <span>Ik zou deze app gebruiken</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="overallExperience" value="Ik vind de app nuttig, maar er mist nog iets" />
+                  <span>Nuttig, maar er mist iets</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="overallExperience" value="Ik twijfel nog of ik de app zou gebruiken" />
+                  <span>Ik twijfel nog</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="overallExperience" value="Ik zou de app nu nog niet gebruiken" />
+                  <span>Ik zou de app nu niet gebruiken</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom kies je dit?</span>
+                <textarea
+                  name="overallNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Quizvragen</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="quizExperience" value="Ik leer iets van de quizvragen" required />
+                  <span>Ik leer hiervan</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="quizExperience" value="De quizvragen zijn te makkelijk" />
+                  <span>De vragen zijn te makkelijk</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="quizExperience" value="De quizvragen zijn te moeilijk" />
+                  <span>De vragen zijn te moeilijk</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="quizExperience" value="Ik snap sommige quizvragen niet" />
+                  <span>Ik snap sommige vragen niet</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="quizExperience" value="Ik heb de quizvragen niet getest" />
+                  <span>Ik heb dit niet getest</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom kies je dit?</span>
+                <textarea
+                  name="quizNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Daily challenges</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="dailyChallengeExperience" value="De daily challenges motiveren mij" required />
+                  <span>Ze motiveren mij</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="dailyChallengeExperience" value="Er zijn te veel daily challenges tegelijk" />
+                  <span>Het zijn er te veel</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="dailyChallengeExperience" value="Ik snap niet altijd wat ik moet doen" />
+                  <span>Ik snap niet altijd wat ik moet doen</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="dailyChallengeExperience" value="Ik heb de daily challenges niet getest" />
+                  <span>Ik heb dit niet getest</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom kies je dit?</span>
+                <textarea
+                  name="dailyChallengeNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Hartensysteem</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="heartsExperience" value="Het hartensysteem helpt mij focussen" required />
+                  <span>Het helpt mij focussen</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="heartsExperience" value="Ik verlies te snel harten" />
+                  <span>Ik verlies te snel harten</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="heartsExperience" value="Ik snap het hartensysteem niet goed" />
+                  <span>Ik snap het niet goed</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="heartsExperience" value="Ik heb het hartensysteem niet gemerkt" />
+                  <span>Ik heb het niet gemerkt</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom kies je dit?</span>
+                <textarea
+                  name="heartsNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Design en navigatie</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="designExperience" value="Ik vind de app makkelijk te gebruiken" required />
+                  <span>Ik vind de app makkelijk</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="designExperience" value="Ik moet soms zoeken waar iets staat" />
+                  <span>Ik moet soms zoeken</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="designExperience" value="Ik raak snel verdwaald in de app" />
+                  <span>Ik raak snel verdwaald</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom kies je dit?</span>
+                <textarea
+                  name="designNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Techniek</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="technicalExperience" value="Alles werkt goed" required />
+                  <span>Alles werkt goed</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="technicalExperience" value="De app voelt traag of hapert" />
+                  <span>De app voelt traag</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="technicalExperience" value="Ik zag een bug of crash" />
+                  <span>Ik zag een bug of crash</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="technicalExperience" value="Ik heb de techniek niet goed getest" />
+                  <span>Ik heb dit niet goed getest</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom kies je dit?</span>
+                <textarea
+                  name="technicalNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="feedback-question">
+              <legend>Eerste verbeterpunt</legend>
+              <div class="feedback-options">
+                <label class="feedback-choice">
+                  <input type="radio" name="topPriority" value="Maak de quizvragen beter" required />
+                  <span>Maak de quizvragen beter</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="topPriority" value="Geef meer uitleg bij antwoorden" />
+                  <span>Geef meer uitleg bij antwoorden</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="topPriority" value="Maak daily challenges duidelijker" />
+                  <span>Maak challenges duidelijker</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="topPriority" value="Maak het hartensysteem eerlijker" />
+                  <span>Maak harten eerlijker</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="topPriority" value="Maak navigatie makkelijker" />
+                  <span>Maak navigatie makkelijker</span>
+                </label>
+                <label class="feedback-choice">
+                  <input type="radio" name="topPriority" value="Fix bugs of snelheid" />
+                  <span>Fix bugs of snelheid</span>
+                </label>
+              </div>
+              <label class="feedback-note" hidden>
+                <span data-feedback-note-question>Waarom is dit het belangrijkst?</span>
+                <textarea
+                  name="priorityNote"
+                  maxlength="280"
+                  placeholder="Optioneel: schrijf kort waarom je dit kiest."
+                ></textarea>
+              </label>
+            </fieldset>
+
+            <div class="feedback-extra">
+              <button
+                class="secondary-button feedback-toggle-button"
+                type="button"
+                id="extraFeedbackToggle"
+                aria-expanded="false"
+                aria-controls="extraFeedbackPanel"
+              >
+                Extra opmerking toevoegen
+              </button>
+              <div class="feedback-extra-panel" id="extraFeedbackPanel" hidden>
+                <label for="feedbackMessage">Extra opmerking</label>
+                <textarea
+                  id="feedbackMessage"
+                  name="extraNote"
+                  maxlength="600"
+                  placeholder="Optioneel: bug, gemis of extra tip"
+                ></textarea>
+              </div>
             </div>
 
             <div class="feedback-submit-row">
-              <button class="primary-button" type="submit">Verstuur via WhatsApp</button>
+              <button class="primary-button" type="submit">Bekijk overzicht</button>
               <p class="feedback-help" id="feedbackStatus" aria-live="polite"></p>
             </div>
+
           </form>
         </article>
       </main>
@@ -75,30 +323,262 @@
       const whatsappPhoneNumber = "31685612471";
       const feedbackForm = document.querySelector("#feedbackForm");
       const feedbackStatus = document.querySelector("#feedbackStatus");
+      const extraFeedbackToggle = document.querySelector("#extraFeedbackToggle");
+      const extraFeedbackPanel = document.querySelector("#extraFeedbackPanel");
+      const feedbackSections = document.querySelectorAll(".feedback-question");
+      const feedbackChoiceInputs = document.querySelectorAll(".feedback-choice input");
+      const feedbackDraftStorageKey = "deenquest-feedback-draft-v1";
+      const feedbackReviewStorageKey = "deenquest-feedback-review-v1";
+      const feedbackQuestions = [
+        ["testerContext", "Testmoment"],
+        ["overallExperience", "Algemeen oordeel"],
+        ["quizExperience", "Quizvragen"],
+        ["dailyChallengeExperience", "Daily challenges"],
+        ["heartsExperience", "Hartensysteem"],
+        ["designExperience", "Design en navigatie"],
+        ["technicalExperience", "Techniek"],
+        ["topPriority", "Eerste verbeterpunt"],
+      ];
+      const requiredTextFields = [];
+      const optionalTextFields = [
+        ["overallNote", "Waarom algemeen oordeel"],
+        ["quizNote", "Waarom quizvragen"],
+        ["dailyChallengeNote", "Waarom daily challenges"],
+        ["heartsNote", "Waarom hartensysteem"],
+        ["designNote", "Waarom design en navigatie"],
+        ["technicalNote", "Waarom techniek"],
+        ["priorityNote", "Waarom eerste verbeterpunt"],
+        ["extraNote", "Extra opmerking"],
+      ];
+      const answerNoteFields = {
+        overallNote: "Algemeen oordeel",
+        quizNote: "Quizvragen",
+        dailyChallengeNote: "Daily challenges",
+        heartsNote: "Hartensysteem",
+        designNote: "Design en navigatie",
+        technicalNote: "Techniek",
+        priorityNote: "Eerste verbeterpunt",
+      };
+      const feedbackFieldNames = [
+        ...feedbackQuestions.map(([name]) => name),
+        ...requiredTextFields.map(([name]) => name),
+        ...optionalTextFields.map(([name]) => name),
+      ];
+
+      function setFeedbackSectionExpanded(section, isExpanded) {
+        const toggle = section?.querySelector(".feedback-section-toggle");
+
+        if (!section || !toggle) return;
+
+        section.classList.toggle("is-open", isExpanded);
+        toggle.setAttribute("aria-expanded", String(isExpanded));
+      }
+
+      feedbackSections.forEach((section) => {
+        const legend = section.querySelector("legend");
+        const title = legend?.textContent.trim();
+
+        if (!legend || !title) return;
+
+        section.classList.add("feedback-accordion");
+        legend.innerHTML = "";
+
+        const toggle = document.createElement("button");
+        toggle.className = "feedback-section-toggle";
+        toggle.type = "button";
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.innerHTML = `<span>${title}</span><span class="feedback-section-chevron" aria-hidden="true"></span>`;
+        legend.appendChild(toggle);
+
+        const collapseButton = document.createElement("button");
+        collapseButton.className = "feedback-collapse-button";
+        collapseButton.type = "button";
+        collapseButton.setAttribute("aria-label", `${title} inklappen`);
+        collapseButton.innerHTML = `<span class="feedback-collapse-icon" aria-hidden="true"></span>`;
+        section.appendChild(collapseButton);
+
+        toggle.addEventListener("click", () => {
+          const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+          setFeedbackSectionExpanded(section, !isExpanded);
+        });
+
+        collapseButton.addEventListener("click", () => {
+          setFeedbackSectionExpanded(section, false);
+          toggle.focus();
+        });
+      });
+
+      function updateFeedbackNote(input) {
+        const question = input.closest(".feedback-question");
+        const note = question?.querySelector(".feedback-note");
+        const prompt = note?.querySelector("[data-feedback-note-question]");
+        const textarea = note?.querySelector("textarea");
+        const selectedText = input.closest(".feedback-choice")?.querySelector("span")?.textContent.trim();
+
+        if (!note || !prompt || !textarea || !selectedText) return;
+
+        note.hidden = false;
+        prompt.textContent = `Waarom kies je: ${selectedText}?`;
+        textarea.placeholder = `Optioneel: leg kort uit waarom je "${selectedText}" kiest.`;
+      }
+
+      feedbackChoiceInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          updateFeedbackNote(input);
+          storeFeedbackDraft();
+        });
+      });
+
+      extraFeedbackToggle?.addEventListener("click", () => {
+        if (!extraFeedbackPanel) return;
+
+        const isExpanded = extraFeedbackToggle.getAttribute("aria-expanded") === "true";
+        extraFeedbackToggle.setAttribute("aria-expanded", String(!isExpanded));
+        extraFeedbackToggle.textContent = isExpanded ? "Extra opmerking toevoegen" : "Extra opmerking verbergen";
+        extraFeedbackPanel.hidden = isExpanded;
+
+        if (!isExpanded) {
+          extraFeedbackPanel.querySelector("textarea")?.focus();
+        }
+      });
+
+      function readStoredJson(key) {
+        try {
+          const value = sessionStorage.getItem(key);
+          return value ? JSON.parse(value) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function writeStoredJson(key, value) {
+        try {
+          sessionStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function getFeedbackDraft() {
+        const data = new FormData(feedbackForm);
+        return feedbackFieldNames.reduce((draft, name) => {
+          draft[name] = String(data.get(name) || "");
+          return draft;
+        }, {});
+      }
+
+      function storeFeedbackDraft() {
+        if (!feedbackForm) return;
+        writeStoredJson(feedbackDraftStorageKey, getFeedbackDraft());
+      }
+
+      function restoreFeedbackDraft() {
+        if (!feedbackForm) return;
+
+        const draft = readStoredJson(feedbackDraftStorageKey);
+
+        if (!draft || typeof draft !== "object") return;
+
+        feedbackQuestions.forEach(([name]) => {
+          feedbackForm.querySelectorAll(`[name="${name}"]`).forEach((input) => {
+            input.checked = input.value === draft[name];
+
+            if (input.checked) {
+              updateFeedbackNote(input);
+            }
+          });
+        });
+
+        [...requiredTextFields, ...optionalTextFields].forEach(([name]) => {
+          const field = feedbackForm.elements[name];
+
+          if (field && typeof draft[name] === "string") {
+            field.value = draft[name];
+          }
+        });
+
+        if (draft.extraNote && extraFeedbackToggle && extraFeedbackPanel) {
+          extraFeedbackToggle.setAttribute("aria-expanded", "true");
+          extraFeedbackToggle.textContent = "Extra opmerking verbergen";
+          extraFeedbackPanel.hidden = false;
+        }
+      }
+
+      function getFeedbackPayload() {
+        const data = new FormData(feedbackForm);
+        const answers = feedbackQuestions.map(([name, label]) => [label, String(data.get(name) || "").trim()]);
+        const requiredTextAnswers = requiredTextFields.map(([name, label]) => [
+          name,
+          label,
+          String(data.get(name) || "").trim(),
+        ]);
+        const optionalTextAnswers = optionalTextFields
+          .map(([name, label]) => [name, label, String(data.get(name) || "").trim()])
+          .filter(([, , value]) => value);
+        const textBlocks = [...requiredTextAnswers, ...optionalTextAnswers];
+        const whatsappMessage = [
+          "Hoi Omar, hierbij mijn feedback over DeenQuest.",
+          "",
+          ...answers.map(([label, value]) => `${label}: ${value}`),
+          ...(textBlocks.length ? ["", textBlocks.map(([, label, value]) => `${label}:\n${value}`).join("\n\n")] : []),
+        ].join("\n");
+
+        return { answers, textBlocks, whatsappMessage };
+      }
+
+      feedbackForm?.addEventListener("input", storeFeedbackDraft);
+      feedbackForm?.addEventListener("change", storeFeedbackDraft);
 
       feedbackForm?.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const data = new FormData(feedbackForm);
-        const message = String(data.get("body") || "").trim();
+        const missingQuestion = feedbackQuestions.find(([name]) => !String(data.get(name) || "").trim());
 
-        if (!message) {
-          feedbackStatus.textContent = "Schrijf eerst kort je feedback op.";
+        if (missingQuestion) {
+          const input = feedbackForm.querySelector(`[name="${missingQuestion[0]}"]`);
+          setFeedbackSectionExpanded(input?.closest(".feedback-question"), true);
+          feedbackStatus.textContent = `Beantwoord nog: ${missingQuestion[1]}.`;
+          input?.focus();
           return;
         }
 
-        const whatsappMessage = [
-          "Hoi Omar, hierbij mijn feedback over DeenQuest.",
-          "",
-          message,
-        ].join("\n");
+        const missingTextField = requiredTextFields.find(([name]) => !String(data.get(name) || "").trim());
+
+        if (missingTextField) {
+          const input = feedbackForm.elements[missingTextField[0]];
+          feedbackStatus.textContent = `Vul nog in: ${missingTextField[1]}.`;
+          input?.focus();
+          return;
+        }
+
+        const { answers, textBlocks, whatsappMessage } = getFeedbackPayload();
 
         const whatsappPath = whatsappPhoneNumber ? `https://wa.me/${whatsappPhoneNumber}` : feedbackForm.action;
         const whatsappUrl = new URL(whatsappPath);
         whatsappUrl.searchParams.set("text", whatsappMessage);
-        feedbackStatus.textContent = "WhatsApp wordt geopend met je feedback.";
-        window.location.href = whatsappUrl.toString();
+        storeFeedbackDraft();
+
+        const stored = writeStoredJson(feedbackReviewStorageKey, {
+          answers,
+          answerNoteFields,
+          textBlocks,
+          whatsappMessage,
+          whatsappUrl: whatsappUrl.toString(),
+          createdAt: new Date().toISOString(),
+        });
+
+        if (!stored) {
+          feedbackStatus.textContent = "Het overzicht kon niet worden geopend. Probeer het opnieuw.";
+          return;
+        }
+
+        feedbackStatus.textContent = "Overzicht wordt geopend.";
+        window.location.assign("feedback-overzicht.html");
       });
+
+      restoreFeedbackDraft();
     </script>
   </body>
 </html>
